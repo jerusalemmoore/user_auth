@@ -4,8 +4,8 @@
 class AccountInfo {
 public:
 	std::string cleanName(std::string name);
-	bool isNameAlpha(std::string firstName, std::string type);
-	bool confirmName(std::string name, std::string type);
+	bool isNameAlpha(std::string firstName, bool type);
+	bool confirmName(std::string name, bool type);
 	//get and verify info from input
 	bool getFirstName();
 	bool getLastName();

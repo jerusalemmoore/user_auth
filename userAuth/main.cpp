@@ -5,6 +5,7 @@
 #include "accountInfo.h"
 
 #include "sqlite3.h"
+//callback used for error handling sqlite3
 static int callback(void* NotUsed, int argc, char** argv, char** azColName) {
 	int i;
 	for (i = 0; i < argc; i++) {
@@ -17,6 +18,11 @@ static int callback(void* NotUsed, int argc, char** argv, char** azColName) {
 //return null if error
 //this should run in exec, then close it so we don't need 
 //to worry about forgetting to close
+//start db with given name
+//input:
+//string dbname: name of db file to open
+//return:
+//pointer to db
 sqlite3* startDB(std::string dbname) {
 	sqlite3* db;
 	int rc;
@@ -80,6 +86,9 @@ void dbhealthcheck() {
 	sql_ex(db, sql);
 
 }
+//test inserts into a db table 
+//prints output of table after insertions
+//should fail when inserting duplicate "first" "first" for full name 
 void dbtest1() {
 	std::string dbname = "testdb";
 	std::string sql =
@@ -102,11 +111,11 @@ void dbtest1() {
 }
 
 int main() {
-	//AccountInfo AccountInfo;
-	//AccountInfo.runInterface();
-	//AccountInfo.printFullName();
-	std::string firstName = "Jerusalem";
-	std::string lastName = "Moore";
+	AccountInfo AccountInfo;
+	AccountInfo.runInterface();
+	AccountInfo.printFullName();
+	/*std::string firstName = "Jerusalem";
+	std::string lastName = "Moore";*/
 	//dbhealthcheck();
 
 }
