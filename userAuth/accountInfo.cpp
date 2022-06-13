@@ -8,7 +8,6 @@
 
 */
 #include "accountInfo.h"
-#include "interface.cpp"
 #define _CRTDBG_MAP_ALLOC
 
 /*
