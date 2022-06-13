@@ -1,0 +1,6 @@
+/*
+	UserDB
+
+*/
+class UserDB{
+};

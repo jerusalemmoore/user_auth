@@ -1,6 +1,8 @@
 //class for extracting info and validating the input given by user
 #pragma once
-#include <iostream>
+#include <stdio.h>
+#include <string>
+#include <iostream> 
 class AccountInfo {
 public:
 	std::string cleanName(std::string name);

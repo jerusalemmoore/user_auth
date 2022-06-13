@@ -1,13 +1,25 @@
+/*
+	Programmer: Jerusalem Moore
+	Class: AccountInfo
+	Description:
+		Class meant to hold individual account information
+		Information will be used to store and query a db
+		Class currently has an interface builtin this might need to be implemented as it's own class(Registration System)
+		
+*/
 #include <regex>
 #include "accountInfo.h"
-#define FIRST true //flag for processing string as first name in functions
 
-//Format first/last name 
-//First char uppercase, all other lowercase
-//input:
-//string name: name to clean
-//output:
-//cleaned string name 
+#define FIRST true //flag for processing string as first name in functions
+/*
+	Format first/last name 
+	First char uppercase, all other lowercase
+	input:
+	string name: name to clean
+	output:
+	cleaned string name 
+*/
+
 std::string AccountInfo::cleanName(std::string name) {
 	//make sure first name is uppercase, everything else is lowercase
 	for (int i = 0; i < name.length(); i++) {
@@ -18,10 +30,12 @@ std::string AccountInfo::cleanName(std::string name) {
 	return name;
 }
 
+/*
+	make sure name is only letters
+	input:
+	string name
+*/
 
-//make sure name is only letters
-//input:
-//string name
 bool AccountInfo::isNameAlpha(std::string name, bool first) {
 	//is name alphabetical, if not return false 
 	if (std::regex_match(name, std::regex("^[A-Za-z]+$"))) {
@@ -48,10 +62,12 @@ bool AccountInfo::isNameAlpha(std::string name, bool first) {
 
 }
 
+/*
+	confirm first or last name depending on type
+	name: name to confirm
+	type: FIRST or LAST const for first or last name 
+*/
 
-//confirm first or last name depending on type
-//name: name to confirm
-//type: FIRST or LAST const for first or last name 
 bool AccountInfo::confirmName(std::string name, bool isFirst) {
 	//just get the first string of input to evaluate as the first name 
 //this line clears the buffer so the remaining inputs don't register for the following confirmation
@@ -77,9 +93,11 @@ bool AccountInfo::confirmName(std::string name, bool isFirst) {
 	}
 }
 
+/*
+	routine for extracting first name from user input
+	return false until first name is verified and cleaned
+*/
 
-//routine for extracting first name from user input
-//return false until first name is verified and cleaned
 bool AccountInfo::getFirstName() {
 	std::cout << "Please enter valid first name" << std::endl;
 	std::string firstName;
@@ -89,9 +107,11 @@ bool AccountInfo::getFirstName() {
 
 }
 
+/*
+	routine for extracting last name from user input
+	return false until first name is verified and cleaned
+*/
 
-//routine for extracting last name from user input
-//return false until first name is verified and cleaned 
 bool AccountInfo::getLastName() {
 	std::cout << "Please enter valid last name" << std::endl;
 	std::string lastName;
@@ -100,31 +120,36 @@ bool AccountInfo::getLastName() {
 	return confirmed;
 }
 
-
-//set accountInfo firstname private member to firstname val
-//input:
-//string to assign to private member
+/*
+	set accountInfo firstname private member to firstname val
+	input:
+	string to assign to private member
+*/
 void AccountInfo::setFirstName(std::string firstname) {
 	firstName = firstname;
 }
 
+/*
+	set accountInfo lastname private member to lastname val
+	input:
+	string to assign to private member
+*/
 
-//set accountInfo lastname private member to lastname val
-//input:
-//string to assign to private member
 void AccountInfo::setLastName(std::string lastname) {
 	lastName = lastname;
 }
+/*
+	run firstNameConfirmed until valid name is produced
+	run lastNameConfirmed until valid name is produced
+*/
 
-//run firstNameConfirmed until valid name is produced
-//run lastNameConfirmed until valid name is produced
 void AccountInfo::runInterface() {
 	std::cout << "Please enter requested credentials" << std::endl;
-	bool firstNameConfirmed;
+	bool firstNameConfirmed = false;
 	do {
 		firstNameConfirmed = getFirstName();
 	} while (!firstNameConfirmed);
-	bool lastNameConfirmed;
+	bool lastNameConfirmed = false;
 	do {
 		lastNameConfirmed = getLastName();
 	} while (!lastNameConfirmed);
