@@ -1,5 +1,12 @@
+/*
+	Programmer: Jerusalem Moore
+	Class: Interface 
+	Description:
+		Class used for user interacton. Traverse different options, store to db, query db, parsing input
+		all happen here.
+*/
+#pragma once
 #include "interface.h"
-
 #define FIRST true //flag for processing string as first name in functions
 
 Interface::Interface() {

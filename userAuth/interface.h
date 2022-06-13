@@ -1,3 +1,10 @@
+/*
+	Programmer: Jerusalem Moore
+	Class: Interface 
+	Description:
+		Class used for front-end user interacton. Choosing different options, store to db, query db,
+		and processing input all happen here.
+*/
 #pragma once
 #include "accountInfo.h"
 #include <regex>

@@ -1,4 +1,5 @@
 /*
+	Programmer: Jerusalem Moore
 	Class: UserDB
 	Definition:
 		Class meant to store and process user Account info for query and account

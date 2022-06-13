@@ -1,6 +1,9 @@
 /*
-	
-
+	Programmer: Jerusalem Moore
+	Class: UserDB
+	Description:
+		Class for utilizing a sqlite3 db and making queries for user authentication
+		and account management
 */
 #include "sqlite3.h"
 #include <stdio.h>

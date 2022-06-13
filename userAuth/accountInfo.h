@@ -1,4 +1,10 @@
-//class for extracting info and validating the input given by user
+/*
+	Programmer: Jerusalem Moore
+	Class: AccountInfo
+	Description:
+		Class used for storing account info, the info stored here will be used to access
+		db information on a specific user
+*/
 #pragma once
 #include <stdio.h>
 #include <string>
