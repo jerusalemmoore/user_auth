@@ -53,6 +53,11 @@ bool Interface::processLastName() {
 	bool confirmed = confirmName(lastName, !FIRST);
 	return confirmed;
 }
+/*
+	confirm first or last name depending on type
+	name: name to confirm
+	type: FIRST or !FIRST defined for first or last name
+*/
 bool Interface::confirmName(std::string name, bool isFirst) {
 	//just get the first string of input to evaluate as the first name 
 //this line clears the buffer so the remaining inputs don't register for the following confirmation
@@ -77,6 +82,12 @@ bool Interface::confirmName(std::string name, bool isFirst) {
 		}
 	}
 }
+
+/*
+	make sure name is only letters
+	input:
+	string name
+*/
 
 bool Interface::isNameAlpha(std::string name, bool first) {
 	//is name alphabetical, if not return false 

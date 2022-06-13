@@ -12,6 +12,7 @@
 #include "accountInfo.h"
 #include "userdb.h"
 #include "sqlite3.h"
+#include "interface.h"
 //callback used for error handling sqlite3
 //static int callback(void* NotUsed, int argc, char** argv, char** azColName) {
 //	int i;
@@ -119,11 +120,14 @@
 
 int main() {
 
-	AccountInfo* accountInfo = new AccountInfo();
+	/*AccountInfo* accountInfo = new AccountInfo();
 	UserDB* user = new UserDB();
 	delete(user);
-	delete(accountInfo);
+	delete(accountInfo);*/
+	Interface* interface = new Interface();
+	interface->runInterface();
 	//check for leaks
+	delete(interface);
 	bool  isLeaking = _CrtDumpMemoryLeaks();
 	std::cout << isLeaking << std::endl;
 	

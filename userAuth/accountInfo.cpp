@@ -27,27 +27,6 @@ AccountInfo::~AccountInfo() {
 
 }
 
-
-
-/*
-	make sure name is only letters
-	input:
-	string name
-*/
-
-
-
-/*
-	confirm first or last name depending on type
-	name: name to confirm
-	type: FIRST or LAST const for first or last name
-*/
-
-
-
-
-
-
 /*
 	set accountInfo firstname private member to firstname val
 	input:
