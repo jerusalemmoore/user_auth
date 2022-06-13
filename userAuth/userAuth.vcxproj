@@ -128,11 +128,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="accountInfo.cpp" />
-    <ClCompile Include="Db.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="interface.cpp" />
+    <ClCompile Include="userdb.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="accountInfo.h" />
+    <ClInclude Include="interface.h" />
     <ClInclude Include="userdb.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
