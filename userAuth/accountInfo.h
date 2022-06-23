@@ -4,6 +4,13 @@
 	Description:
 		Class used for storing account info, the info stored here will be used to access
 		db information on a specific user
+
+	Info to store into AccountInfo:
+	First Name
+	Last Name
+	Username(unique)
+	Password
+
 */
 #pragma once
 #include <stdio.h>

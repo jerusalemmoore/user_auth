@@ -9,13 +9,21 @@
 
 
 //callback used for error handling sqlite3
-int UserDB::callback(void* NotUsed, int argc, char** argv, char** azColName) {
+int UserDB::callback(void* notUsed, int argc, char** argv, char** azColName) {
 	int i;
+	std::cout << "callback was called" << std::endl;
 	for (i = 0; i < argc; i++) {
 		printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+		notUsed = (char*)argv[i];
+		strcpy_s((char*)notUsed, sizeof(notUsed), argv[i]);
 	}
+	//std::cout << "val: " << (char*)data << std::endl;
+
 	printf("\n");
 	return 0;
+}
+void UserDB::updateData(std::string data) {
+
 }
 
 //take a name and open db based off of string
@@ -42,6 +50,29 @@ sqlite3* UserDB::startDB(std::string dbname) {
 //open the db, enter a statement, and close the db after execution
 void UserDB::sqlEx(std::string statement) {
 	sqlite3* db = startDB(dbname);
+	char* mydata = 0;
+	if (db == nullptr) {
+		std::cout << "error, startDB returned null" << std::endl;
+	}
+	int rc;
+	char* zErrMsg = 0;
+	rc = sqlite3_exec(db, statement.c_str(), callback, mydata, &zErrMsg);
+	if (rc != SQLITE_OK) {
+		fprintf(stderr, "SQL error: %s\n", zErrMsg);
+		sqlite3_free(zErrMsg);
+	}
+	else {
+		//std::cout << "val: " << (char*)data << std::endl;
+		printf("mydata: %s\n", mydata);
+		fprintf(stdout, "Operation ran successfully\n");
+	}
+	sqlite3_close(db);
+
+}
+
+void UserDB::findUsername(std::string username) {
+	sqlite3* db = startDB(dbname);
+	std::string statement = "SELECT * FROM TEST;";
 	if (db == nullptr) {
 		std::cout << "error, startDB returned null" << std::endl;
 	}
@@ -55,11 +86,16 @@ void UserDB::sqlEx(std::string statement) {
 	else {
 		fprintf(stdout, "Operation ran successfully\n");
 	}
-	sqlite3_close(db);
-
+	//int rc;  
+	//const char* zSql = "SELECT * FROM TEST;";
+	//int nByte = strlen(zSql);
+	//sqlite3_stmt* pptStmt;
+	//const char* pzTail;
+	//rc = sqlite3_prepare_v2(db, zSql, nByte, &pptStmt, &pzTail);
+	//const unsigned char* dbval = sqlite3_column_text(pptStmt, 0);
+	//printf("The user is: %s\n", dbval);
+	//sqlite3_close(db);
 }
-
-
 
 std::string UserDB::getid() {
 	return this->dbname;
@@ -72,7 +108,6 @@ std::string UserDB::getid() {
 void UserDB::dbhealthcheck() {
 	std::string firstName = "Jerusalem";
 	std::string lastName = "Moore";
-	
 	std::string sql =
 		"CREATE TABLE IF NOT EXISTS TEST(" \
 		"ID INTEGER PRIMARY KEY  AUTOINCREMENT," \
@@ -84,10 +119,26 @@ void UserDB::dbhealthcheck() {
 		"VALUES('" + firstName + " " + lastName + "'); ";
 	std::cout << "running:" << std::endl << sql << std::endl;
 	sqlEx(sql);
+	firstName = "Bob";
+	lastName = "Hope";
+	sql =
+		"INSERT INTO TEST(FULL_NAME)" \
+		"VALUES('" + firstName + " " + lastName + "'); ";
+	std::cout << "running:" << std::endl << sql << std::endl;
+	sqlEx(sql);
+	firstName = "Lex";
+	lastName = "Buck";
+	sql =
+		"INSERT INTO TEST(FULL_NAME)" \
+		"VALUES('" + firstName + " " + lastName + "'); ";
+	std::cout << "running:" << std::endl << sql << std::endl;
+	sqlEx(sql);
 	sql = "SELECT * from TEST";
 	std::cout << "running:" << std::endl << sql << std::endl;
 	sqlEx(sql);
+	sql = "SELECT EXISTS(SELECT FULL_NAME from TEST WHERE FULL_NAME = 'Jerusalem Mo')";
 	std::cout << "running:" << std::endl << sql << std::endl;
+	sqlEx(sql);
 	sql = "DROP TABLE TEST";
 	std::cout << "running:" << std::endl << sql << std::endl;
 	sqlEx(sql);

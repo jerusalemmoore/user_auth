@@ -7,6 +7,7 @@
 */
 #pragma once
 #include "accountInfo.h"
+#include "userdb.h"
 #include <regex>
 #include <string>
 #include <iostream>
@@ -15,15 +16,22 @@ public:
 	Interface();
 	~Interface();
 	void runInterface();
+	void checkdb();
+	void checkAccount();
+	void registerUser();
 	//void createAccount();
 	//void logout();
 	//void login();
 private:
 	AccountInfo* account;
+	UserDB* userdb;
 	std::string cleanName(std::string name);
 	bool isNameAlpha(std::string firstName, bool type);
 	bool confirmName(std::string name, bool type);
+	bool confirmUsername(std::string username);
 	//get and verify info from input
 	bool processFirstName();
 	bool processLastName();
+	bool processUsername();
+
 };

@@ -8,19 +8,50 @@
 #pragma once
 #include "interface.h"
 #define FIRST true //flag for processing string as first name in functions
-
+//when interface created, make sure USERS table exists 
+//develop schema and verify schema in constructor
 Interface::Interface() {
 	account = new AccountInfo();
+	userdb = new UserDB();
+	std::string initTable =
+		" \
+		CREATE TABLE IF NOT EXISTS USERS (\
+		uid INTEGER PRIMARY KEY, \
+		firsName TEXT NOT NULL, \
+		lastName TEXT NOT NULL, \
+		username TEXT NOT NULL UNIQUE, \
+		password TEXT NOT NULL \
+		);\
+		" ;
+	userdb->sqlEx(initTable);
+	std::string getTableInfo = "\
+		pragma table_info('users');\
+		";
+	userdb->sqlEx(getTableInfo);
 }
 Interface::~Interface() {
 	delete account;
+	delete userdb;
+}
+bool Interface::confirmUsername(std::string username) {
+	userdb->sqlEx("SELECT * FROM USERS WHERE username == '" + username + "';");
+	return true;
+}
+bool Interface::processUsername() {
+	std::string username;
+	std::cout << "Please enter valid username" << std::endl;
+	std::cout << "Rules:" << std::endl;
+	std::cout << "1. only one word" << std::endl;
+	std::cout << "2. must be unique" << std::endl;
+	std::cin >> username;
+	bool confirmed = confirmUsername(username);
+	return confirmed;
 }
 /*
 	run firstNameConfirmed until valid name is produced
 	run lastNameConfirmed until valid name is produced
 */
-
-void Interface::runInterface() {
+void Interface::registerUser() {
 	std::cout << "Please enter requested credentials" << std::endl;
 	bool firstNameConfirmed = false;
 	do {
@@ -30,6 +61,25 @@ void Interface::runInterface() {
 	do {
 		lastNameConfirmed = processLastName();
 	} while (!lastNameConfirmed);
+	bool usernameConfirmed = false;
+	do {
+		usernameConfirmed = processUsername();
+	} while (!usernameConfirmed);
+
+}
+void Interface::runInterface() {
+	int userInput = -1;
+	while (userInput != 2) {
+		std::cout << "Please choose an option: (1,2,3...)" << std::endl;
+		std::cout << "1. Register" << std::endl;
+		std::cout << "2. Exit" << std::endl;
+		std::cin >> userInput;
+		switch (userInput) {
+			case 1: {
+				registerUser();
+			}
+		}		
+	}
 }
 
 std::string Interface::cleanName(std::string name) {
@@ -120,4 +170,10 @@ bool Interface::isNameAlpha(std::string name, bool first) {
 	return false;
 
 
+}
+void Interface::checkdb() {
+	userdb->dbhealthcheck();
+}
+void Interface::checkAccount() {
+	account->printFullName();
 }
