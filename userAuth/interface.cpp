@@ -12,7 +12,7 @@
 //develop schema and verify schema in constructor
 Interface::Interface() {
 	account = new AccountInfo();
-	userdb = new UserDB();
+	userdb = new UserDB("USERS");
 	std::string initTable =
 		" \
 		CREATE TABLE IF NOT EXISTS USERS (\

@@ -135,6 +135,7 @@
   <ItemGroup>
     <ClInclude Include="accountInfo.h" />
     <ClInclude Include="interface.h" />
+    <ClInclude Include="queryStructs.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="userdb.h" />
   </ItemGroup>

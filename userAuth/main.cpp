@@ -25,10 +25,23 @@ static int callback(void* data, int argc, char** argv, char** azColName) {
 
 /// THIS IS WHAT WE'RE DOING
 /// //////////////////////////////
-/// TRYING TO PARSE DATA RETURNED FROM SQL QUERY THROUGH CALL BACK
-/// WE'RE GOING TO NEED TO LOOK IN PREPARE/BIND QUERY WORKFLOW
+///YOU BUILT USERNAME SQL QUERY SEARCH(SHOULD CLEAN AND DOCUMENT)
+///YOU NEED BETTER GENERALIZATION OF SELECT FUNC
 int main() {
-	sqlite3* db;
+	UserDB* userdb = new UserDB("users");
+	std::string sql = "\
+		INSERT INTO USERS (username, firstname, lastname)\
+		VALUES ('jerusalemmoore','Jerusalem', 'Moore');\
+		INSERT INTO USERS (username, firstname, lastname)\
+		VALUES ('jonbell','jon', 'bell');\
+I		NSERT INTO USERS (username, firstname, lastname)\
+		VALUES ('derrickz','derrick', 'zen');\
+		";
+	userdb->sqlEx(sql);
+	username username;
+	username.content = "jonbell";
+	userdb->findUsername(username);
+	/*sqlite3* db;
 	int rc = sqlite3_open("testdb", &db);
 	if (rc != SQLITE_OK) {
 		std::cout << "Error opening db: " << sqlite3_errmsg(db) << std::endl;
@@ -61,7 +74,7 @@ int main() {
 	}
 	rc = sqlite3_step(statement);
 	sql = "SELECT firstname FROM TEST WHERE firstname == 'Jerusalm'";
-	char string;
+	
 	rc = sqlite3_prepare_v2(db, sql.c_str(), size(sql), &statement, NULL);
 	if (rc != SQLITE_OK) {
 		std::cout << "Error preparing statment: " << sqlite3_errmsg(db) << std::endl;
@@ -73,7 +86,7 @@ int main() {
 		std::cout << "name not in db" << std::endl;
 		return 1;
 	}
-	std::cout << val << std::endl;
+	std::cout << val << std::endl;*/
 	
 	/*UserDB* userdb = new UserDB();
 	userdb->dbhealthcheck();
