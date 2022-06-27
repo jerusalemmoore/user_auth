@@ -12,40 +12,31 @@
 //develop schema and verify schema in constructor
 Interface::Interface() {
 	account = new AccountInfo();
-	userdb = new UserDB("USERS");
-	std::string initTable =
-		" \
-		CREATE TABLE IF NOT EXISTS USERS (\
-		uid INTEGER PRIMARY KEY, \
-		firsName TEXT NOT NULL, \
-		lastName TEXT NOT NULL, \
-		username TEXT NOT NULL UNIQUE, \
-		password TEXT NOT NULL \
-		);\
-		" ;
-	userdb->sqlEx(initTable);
-	std::string getTableInfo = "\
-		pragma table_info('users');\
-		";
-	userdb->sqlEx(getTableInfo);
+	userdb = new UserDB("userdb");
+	
 }
 Interface::~Interface() {
 	delete account;
 	delete userdb;
+	
 }
-bool Interface::confirmUsername(std::string username) {
-	userdb->sqlEx("SELECT * FROM USERS WHERE username == '" + username + "';");
-	return true;
+bool Interface::confirmUsername(Username username) {
+	
+	bool usernameConfirmed = userdb->usernameExists(username);
+	return usernameConfirmed;
 }
 bool Interface::processUsername() {
-	std::string username;
+	std::string newUsername;
 	std::cout << "Please enter valid username" << std::endl;
 	std::cout << "Rules:" << std::endl;
 	std::cout << "1. only one word" << std::endl;
 	std::cout << "2. must be unique" << std::endl;
-	std::cin >> username;
+	std::cin >> newUsername;
+	Username username;
+	username.content = newUsername;
 	bool confirmed = confirmUsername(username);
 	return confirmed;
+	//return true;
 }
 /*
 	run firstNameConfirmed until valid name is produced
@@ -54,13 +45,13 @@ bool Interface::processUsername() {
 void Interface::registerUser() {
 	std::cout << "Please enter requested credentials" << std::endl;
 	bool firstNameConfirmed = false;
-	do {
+	/*do {
 		firstNameConfirmed = processFirstName();
 	} while (!firstNameConfirmed);
 	bool lastNameConfirmed = false;
 	do {
 		lastNameConfirmed = processLastName();
-	} while (!lastNameConfirmed);
+	} while (!lastNameConfirmed);*/
 	bool usernameConfirmed = false;
 	do {
 		usernameConfirmed = processUsername();
@@ -77,6 +68,10 @@ void Interface::runInterface() {
 		switch (userInput) {
 			case 1: {
 				registerUser();
+				break;
+			}
+			case 2: {
+				return;
 			}
 		}		
 	}
@@ -145,7 +140,6 @@ bool Interface::confirmName(std::string name, bool isFirst) {
 	input:
 	string name
 */
-
 bool Interface::isNameAlpha(std::string name, bool first) {
 	//is name alphabetical, if not return false 
 	if (std::regex_match(name, std::regex("^[A-Za-z]+$"))) {
@@ -176,4 +170,7 @@ void Interface::checkdb() {
 }
 void Interface::checkAccount() {
 	account->printFullName();
+}
+void Interface::dbStat() {
+
 }

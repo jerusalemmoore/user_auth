@@ -4,15 +4,15 @@
 	Date: 6/25/2022
 */
 #include <string>
-struct firstname{
+struct Firstname{
 	std::string content;
 };
-struct username {
+struct Username {
 	std::string content;
 };
-struct lastname {
+struct Lastname {
 	std::string content;
 };
-struct id {
+struct Id {
 	std::string content;
 };

@@ -19,6 +19,7 @@ public:
 	void checkdb();
 	void checkAccount();
 	void registerUser();
+	void dbStat();
 	//void createAccount();
 	//void logout();
 	//void login();
@@ -28,7 +29,7 @@ private:
 	std::string cleanName(std::string name);
 	bool isNameAlpha(std::string firstName, bool type);
 	bool confirmName(std::string name, bool type);
-	bool confirmUsername(std::string username);
+	bool confirmUsername(Username username);
 	//get and verify info from input
 	bool processFirstName();
 	bool processLastName();

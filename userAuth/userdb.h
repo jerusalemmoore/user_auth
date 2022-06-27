@@ -15,24 +15,28 @@
 class UserDB{
 public:
 	UserDB(std::string dbname);
+	~UserDB();
 	static int callback(void* NotUsed, int argc, char** argv, char** azColName);
 	std::string getid();
 	void sqlEx(std::string statement);
-	bool findUsername(username username);
+	bool usernameExists(Username username);
 	void dbhealthcheck();
 	void dbtest1();
 	void updateData(std::string data);
 private:
+	//func for intializing db when making queries
 	sqlite3* startDB(std::string dbname);
 	sqlite3_stmt* select(std::vector<std::string> colNames, std::string tableName, std::string username);
-	sqlite3_stmt* select(firstname firstname);
-	sqlite3_stmt* select(struct lastname);
-	sqlite3_stmt* select(struct username);
-	sqlite3_stmt* select(struct id);
+	//utilities for specific col/row val
+	const unsigned char* select(Firstname firstname);
+	sqlite3_stmt* select(Lastname lastname);
+	std::string select(Username username);
+	sqlite3_stmt* select(Id);
 	sqlite3* userdb;
 	void* data;
 	std::string dbname;
 	std::string tblname;
+	//string for userdb main table
 	static const std::string USR;
 
 };
