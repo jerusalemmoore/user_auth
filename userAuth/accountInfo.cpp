@@ -21,6 +21,7 @@
 AccountInfo::AccountInfo() {
 	firstName = "";
 	lastName = "";
+	username = "";
 
 }
 AccountInfo::~AccountInfo() {
@@ -33,7 +34,7 @@ AccountInfo::~AccountInfo() {
 	string to assign to private member
 */
 void AccountInfo::setFirstName(std::string firstname) {
-	firstName = firstname;
+	this->firstName = firstname;
 }
 /*
 	set accountInfo lastname private member to lastname val
@@ -42,11 +43,15 @@ void AccountInfo::setFirstName(std::string firstname) {
 */
 
 void AccountInfo::setLastName(std::string lastname) {
-	lastName = lastname;
+	this->lastName = lastname;
 }
 
-
-
+void AccountInfo::setUsername(std::string username) {
+	this->username = username;
+}
+std::string AccountInfo::getUsername() {
+	return username;
+}
 std::string AccountInfo::getFirstName() {
 	return firstName;
 }
@@ -61,4 +66,10 @@ void AccountInfo::printFullName() {
 	std::cout << "Account info" << std::endl;
 	std::cout << "First Name: " << getFirstName() << std::endl;
 	std::cout << "Last Name: " << getLastName() << std::endl;
+}
+void AccountInfo::printData() {
+	std::cout << "Account info" << std::endl;
+	std::cout << "First Name: " << getFirstName() << std::endl;
+	std::cout << "Last Name: " << getLastName() << std::endl;
+	std::cout << "Username: " << getUsername() << std::endl;
 }

@@ -7,7 +7,6 @@
 */
 #include "sqlite3.h"
 #include "queryStructs.h"
-#include <stdio.h>
 #include <string>
 #include <iostream> 
 #include <vector>
@@ -23,15 +22,16 @@ public:
 	void dbhealthcheck();
 	void dbtest1();
 	void updateData(std::string data);
+	void insertUser(std::string firstName, std::string lastName, std::string username);
 private:
 	//func for intializing db when making queries
 	sqlite3* startDB(std::string dbname);
-	sqlite3_stmt* select(std::vector<std::string> colNames, std::string tableName, std::string username);
+	//sqlite3_stmt* select(std::vector<std::string> colNames, std::string tableName, std::string username);
 	//utilities for specific col/row val
-	const unsigned char* select(Firstname firstname);
-	sqlite3_stmt* select(Lastname lastname);
+	std::string select(Firstname firstname);
+	std::string select(Lastname lastname);
 	std::string select(Username username);
-	sqlite3_stmt* select(Id);
+	std::string select(Id);
 	sqlite3* userdb;
 	void* data;
 	std::string dbname;

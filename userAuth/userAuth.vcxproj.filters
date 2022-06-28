@@ -27,6 +27,9 @@
     <ClCompile Include="interface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="errormsg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="accountInfo.h">

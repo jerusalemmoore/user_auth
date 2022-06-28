@@ -23,13 +23,17 @@ public:
 	
 	
 	//get confirmed first and last name
+	std::string getUsername();
 	std::string getFirstName();
 	std::string getLastName();
 	void setFirstName(std::string firstName);
 	void setLastName(std::string lastName);
+	void setUsername(std::string username);
 	void printFullName();
+	void printData();
 private:
 	std::string firstName;
 	std::string lastName;
+	std::string username;
 
 };

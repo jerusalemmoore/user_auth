@@ -31,9 +31,9 @@ static int callback(void* data, int argc, char** argv, char** azColName) {
 int main() {
 	
 	
-	Interface* interface = new Interface();
-	interface->runInterface();
-	delete(interface);
+	Interface* myinterface = new Interface();
+	myinterface ->runInterface();
+	delete(myinterface);
 	int leaking = _CrtDumpMemoryLeaks();
 	if (leaking) {
 		std::cout << "LEAKING\n\n\n" << std::endl;

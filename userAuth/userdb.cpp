@@ -28,7 +28,7 @@ UserDB::UserDB(std::string dbname) {
 		username TEXT UNIQUE,\
 		firstname TEXT,\
 		lastname TEXT, \
-		id PRIMARY KEY \
+		id INTEGER PRIMARY KEY \
 		);";
 	sqlEx(sql);
 	sql = "pragma table_info('USERS')";
@@ -44,6 +44,15 @@ UserDB::UserDB(std::string dbname) {
 }
 UserDB::~UserDB() {
 
+}
+void UserDB::insertUser(std::string firstName, std::string lastName, std::string username) {
+	std::string sql = "\
+	INSERT INTO " + USR + " (firstname,lastname,username)\
+	VALUES ('" + firstName + "','" + lastName + "', '" + username + "')\
+	";
+	sqlEx(sql);
+	sql = "SELECT * FROM " + USR + ";";
+	sqlEx(sql);
 }
 //callback used for error handling sqlite3
 int UserDB::callback(void* notUsed, int argc, char** argv, char** azColName) {
@@ -122,53 +131,53 @@ void UserDB::sqlEx(std::string statement) {
 		colnames - vector of strings for storing columns included in query
 
 */
-sqlite3_stmt* UserDB::select(std::vector<std::string> colNames, std::string tableName, std::string username) {
-	sqlite3* db = startDB(dbname);
-	sqlite3_stmt* statement;
-	std::string sql;
-	int rc;
-	//stop if colname is empty, something bad happened
-	if (colNames.empty()) {
-		std::cout << "Error, colnames list given is empty" << std::endl;
-		exit(EXIT_FAILURE);
-	}
-	if (colNames.size() == 1) {
-		sql = "SELECT " + colNames[0] + " FROM " + tableName + " ";
-	}
-	else {
-		sql = "SELECT";
-		for (auto colname = colNames.begin(); colname != colNames.end(); colname++) {
-			if (std::next(colname) == colNames.end()) {
-				sql += " " + *colname + " ";
-			}
-			else {
-				sql += " " + *colname + ", ";
-
-			}
-		}
-		sql += "FROM " + tableName;
-	}
-	sql += " WHERE username == '" + username + "';";
-	std::cout << sql << std::endl;
-	rc = sqlite3_prepare_v2(db, sql.c_str(), int(sql.length()), &statement, NULL);
-	if (rc != SQLITE_OK) {
-		std::cout << "Error preparing statment: " << std::endl;
-		std::cout << "Error: " << sqlite3_errmsg(db) << std::endl;
-		std::cout << "statement: " << sql << std::endl;
-		return NULL;
-	}
-
-
-	rc = sqlite3_step(statement);
-	const unsigned char* entry1 = sqlite3_column_text(statement, 0);
-	const unsigned char* entry2 = sqlite3_column_text(statement, 1);
-	std::cout << "entry1: " << entry1 << std::endl;
-	std::cout << "entry2: " << entry2 << std::endl;
-
-	return statement;
-
-
-}
+//sqlite3_stmt* UserDB::select(std::vector<std::string> colNames, std::string tableName, std::string username) {
+//	sqlite3* db = startDB(dbname);
+//	sqlite3_stmt* statement;
+//	std::string sql;
+//	int rc;
+//	//stop if colname is empty, something bad happened
+//	if (colNames.empty()) {
+//		std::cout << "Error, colnames list given is empty" << std::endl;
+//		exit(EXIT_FAILURE);
+//	}
+//	if (colNames.size() == 1) {
+//		sql = "SELECT " + colNames[0] + " FROM " + tableName + " ";
+//	}
+//	else {
+//		sql = "SELECT";
+//		for (auto colname = colNames.begin(); colname != colNames.end(); colname++) {
+//			if (std::next(colname) == colNames.end()) {
+//				sql += " " + *colname + " ";
+//			}
+//			else {
+//				sql += " " + *colname + ", ";
+//
+//			}
+//		}
+//		sql += "FROM " + tableName;
+//	}
+//	sql += " WHERE username == '" + username + "';";
+//	std::cout << sql << std::endl;
+//	rc = sqlite3_prepare_v2(db, sql.c_str(), int(sql.length()), &statement, NULL);
+//	if (rc != SQLITE_OK) {
+//		std::cout << "Error preparing statment: " << std::endl;
+//		std::cout << "Error: " << sqlite3_errmsg(db) << std::endl;
+//		std::cout << "statement: " << sql << std::endl;
+//		return NULL;
+//	}
+//
+//
+//	rc = sqlite3_step(statement);
+//	const unsigned char* entry1 = sqlite3_column_text(statement, 0);
+//	const unsigned char* entry2 = sqlite3_column_text(statement, 1);
+//	std::cout << "entry1: " << entry1 << std::endl;
+//	std::cout << "entry2: " << entry2 << std::endl;
+//
+//	return statement;
+//
+//
+//}
 /*
 	findUsername
 		public func for finding username in user table
@@ -186,7 +195,6 @@ bool UserDB::usernameExists(Username username) {
 		std::cout << "Username is unique!" << std::endl;
 		return true;
 	}
-	std::cout << "Username \"" << entry << "\" already exists." << std::endl;
 	return false;
 
 
@@ -228,7 +236,7 @@ std::string UserDB::select(Username username) {
 		return "";
 	}
 	const unsigned char* entry = sqlite3_column_text(statement, 0);
-	std::cout << "username value: " << entry << std::endl;
+	//std::cout << "username value: " << entry << std::endl;
 	std::string copy((char*)entry);
 	sqlite3_finalize(statement);
 	sqlite3_close(db);
