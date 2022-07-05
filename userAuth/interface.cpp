@@ -1,38 +1,41 @@
 /*
 	Programmer: Jerusalem Moore
 	Class: Interface
+	Date: 6/28/2022
 	Description:
 		Class used for user interacton. Traverse different options, store to db, query db, parsing input
 		all happen here.
 */
 #pragma once
 #include "interface.h"
+#include <synchapi.h>
 //#include "errormsg.cpp"
 #define FIRST true //flag for processing string as first name in functions
 #define LOGOUT 2
-#define WHITE 15
-#define RED 12
 
 
 
-void Interface::printError(std::string errMsg) {
-	SetConsoleTextAttribute(hConsole, RED);
-	std::cout << errMsg << std::endl;
-	SetConsoleTextAttribute(hConsole, WHITE);
-}
-void Interface::printError(Username username) {
-	SetConsoleTextAttribute(hConsole, RED);
-	std::cout << "Username \"" << username.content << "\" already exists." << std::endl;
-	SetConsoleTextAttribute(hConsole, WHITE);
-}
+/*
+	Should change error messaging to behave differently depending on given code
+*/
+//void Interface::printError(std::string errMsg) {
+//	SetConsoleTextAttribute(hConsole, RED);
+//	std::cout << errMsg << std::endl;
+//	SetConsoleTextAttribute(hConsole, WHITE);
+//}
+//void Interface::printError(Username username) {
+//	SetConsoleTextAttribute(hConsole, RED);
+//	std::cout << "Username \"" << username.content << "\" already exists." << std::endl;
+//}
+
 /*
 	initialize account info class for holding logged in user info
 	access userdb sqlite3 file
 */
 Interface::Interface() {
-	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	account = new AccountInfo();
 	userdb = new UserDB("userdb");
+	error = new Error();
 }
 
 /*
@@ -42,11 +45,12 @@ Interface::Interface() {
 Interface::~Interface() {
 	delete account;
 	delete userdb;
-
+	delete error;
 }
 
-
-//make sure given input follows username rules
+/*
+	make sure given input follows username rules
+*/
 bool Interface::usernameValid(std::string input) {
 	std::cin.clear();
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -60,7 +64,7 @@ bool Interface::usernameValid(std::string input) {
 			return false;
 		}
 		else if (choice != "n" && choice != "y") {
-			printError(INVALIDENTRY);
+			error->printError(error->INVALIDENTRY);
 		}
 		std::cin.clear();
 		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -68,26 +72,26 @@ bool Interface::usernameValid(std::string input) {
 	//rules for username
 	//length of 5+
 	if (input.length() < 5) {
-		printError(FIVECHAR);
+		error->printError(error->FIVECHAR);
 		return false;
 	}
 	return true;
 }
 
 /*
-	check if username exists in usertable
+	check if there is account linked to given username
 */
-bool Interface::confirmUsername(Username username) {
-	bool usernameConfirmed = userdb->usernameExists(username);
-	if (!usernameConfirmed) {
-		printError(username);
+bool Interface::checkUserExists(Username username) {
+	bool exists = userdb->usernameExists(username);
+	if (exists) {
+		error->printUserError(error->USERNAMEEXISTS, username.content);
 		//std::cout << "Username \"" << username.content << "\" already exists." << std::endl;
 	}
-	return usernameConfirmed;
+	return exists;
 }
 
 /*
-	routine for extracting first name from user input
+	routine for retrieving a first name from user input
 	return false until first name is verified and cleaned
 */
 bool Interface::processFirstName() {
@@ -126,13 +130,15 @@ bool Interface::processUsername() {
 	if (!valid) {
 		return valid;
 	}
-	bool confirmed = confirmUsername(username);
-	if (confirmed) {
+	bool unique = !checkUserExists(username);
+	if (unique) {
 		std::cout << "username confirmed" << std::endl;
 		std::cout << username.content << std::endl;
 		account->setUsername(username.content);
+		return true;
 	}
-	return confirmed;
+	std::cout << "unique: " << unique << std::endl;
+	return false;
 	//return true;
 }
 /*
@@ -150,7 +156,9 @@ void Interface::registerUser() {
 	return;
 
 }
-
+/*
+	Use account credentials to access individual account
+*/
 void Interface::createAccount(AccountInfo* account) {
 	userdb->insertUser(account->getFirstName(), account->getLastName(), account->getUsername());
 	std::cout << "User " << account->getUsername() << " registered" << std::endl;
@@ -158,15 +166,48 @@ void Interface::createAccount(AccountInfo* account) {
 	Sleep(3000);
 	home(account);
 }
+/*
+	check if account with unique username exists
+*/
+bool Interface::exists(Username username) {
+	return userdb->usernameExists(username);
+}
 
+//gather account info through login
+/*
+	in progress...
+*/
 void Interface::login() {
+	std::string input;
+
+	Username username;
+	std::string password;
+	do {
+		std::cout << "----------------------------------------------------" << std::endl;
+		std::cout << "Please Enter Requested Login Credentials" << std::endl;
+		std::cout << "----------------------------------------------------" << std::endl;
+		std::cout << "Username: ";
+		std::cin >> input;
+		username.content = input;
+		std::cout << std::endl;
+		std::cout << "Password: ";
+		std::cin >> password;
+		if (!(exists(username) && (password == "Aa98064203"))) {
+			std::cout << "Error, Username/Password combination incorrect" << std::endl;
+		}
+		std::cout << exists(username) << std::endl;;
+		std::cout << (password == "Aa98064203") << std::endl;
+	} while (!(exists(username) && (password == "Aa98064203")));
+	std::cout << "Logging in..." << std::endl;
 
 }
 void Interface::home(AccountInfo* account) {
 	system("CLS");
 	int input = -1;
 	while (input != LOGOUT) {
+		std::cout << "----------------------------------------------------" << std::endl;
 		std::cout << "Hello " << account->getFirstName() << " " << account->getLastName() << std::endl;
+		std::cout << "----------------------------------------------------" << std::endl;
 		std::cout << "Please choose an option(1, 2, 3...)" << std::endl;
 		std::cout << "1. Edit account" << std::endl;
 		std::cout << "2. Logout" << std::endl;
@@ -178,15 +219,22 @@ void Interface::home(AccountInfo* account) {
 			break;
 		}
 		case 2: {
+			system("CLS");
 			break;
 		}
 		}
 	}
 }
 
+/*
+	entry point for running authentication system
+*/
 void Interface::runInterface() {
 	int userInput = -1;
 	do {
+		std::cout << "----------------------------------------------------" << std::endl;
+		std::cout << "User Authentication System" << std::endl;
+		std::cout << "----------------------------------------------------" << std::endl;
 		std::cout << "Please choose an option: (1,2,3...)" << std::endl;
 		std::cout << "1. Register" << std::endl;
 		std::cout << "2. Login" << std::endl;
@@ -199,25 +247,26 @@ void Interface::runInterface() {
 			break;
 		}
 		case 2: {
-			//login();
+			login();
 			break;
 		}
 		case 3: {
-			return;
+			break;
 		}
 		default: {
-			//SetConsoleTextAttribute(hConsole, RED);
-			printError(INVALIDENTRY);
-			//SetConsoleTextAttribute(hConsole, WHITE);
+			error->printError(error->INVALIDENTRY);
 			std::cin.clear();
 			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 			break;
 		}
 		}
 
-	} while (userInput != 2);
+	} while (userInput != 3);
 }
 
+/*
+	Format first/last name 
+*/
 std::string Interface::cleanName(std::string name) {
 	//make sure first name is uppercase, everything else is lowercase
 	for (int i = 0; i < name.length(); i++) {
@@ -249,7 +298,7 @@ bool Interface::isNameAlpha(std::string name, bool first) {
 		//std::cout << "First name confirmed: " << firstName << std::endl;
 		return true;
 	}
-	printError(NONALPHA);
+	error->printError(error->NONALPHA);
 	return false;
 
 
@@ -279,7 +328,7 @@ bool Interface::confirmName(std::string name, bool isFirst) {
 			return false;
 		}
 		else {
-			printError(INVALIDENTRY);
+		error->printError(error->INVALIDENTRY);
 		}
 	}
 }

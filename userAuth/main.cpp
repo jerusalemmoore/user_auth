@@ -4,7 +4,7 @@
 //#include <crtdbg.h>
 //#include <assert.h>
 //#endif
-#define _CRTDBG_MAP_ALLOC
+//#define _CRTDBG_MAP_ALLOC
 //#include <crtdbg.h>
 //#include <stdio.h>
 //#include <string>
@@ -12,6 +12,12 @@
 //#include "accountInfo.h"
 //#include "userdb.h"
 //#include "sqlite3.h"
+#define _CRTDBG_MAP_ALLOC
+#include <cstdlib>
+#include <crtdbg.h>
+
+
+
 #include "interface.h"
 #include "queryStructs.h"
 static int callback(void* data, int argc, char** argv, char** azColName) {
@@ -34,11 +40,13 @@ int main() {
 	Interface* myinterface = new Interface();
 	myinterface ->runInterface();
 	delete(myinterface);
+
 	int leaking = _CrtDumpMemoryLeaks();
 	if (leaking) {
 		std::cout << "LEAKING\n\n\n" << std::endl;
 	}
 	
+
 
 	return 0;
 }

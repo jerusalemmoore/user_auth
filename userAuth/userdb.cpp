@@ -1,6 +1,7 @@
 /*
 	Programmer: Jerusalem Moore
 	Class: UserDB
+	Date: 6/28/2022
 	Definition:
 		Class meant to store and process user Account info for query and account
 		registration
@@ -192,10 +193,11 @@ bool UserDB::usernameExists(Username username) {
 	//sqlite3_finalize(stmt);
 	std::string entry = select(username);
 	if (entry == "") {
-		std::cout << "Username is unique!" << std::endl;
-		return true;
+		std::cout << "Username doesn't exist!" << std::endl;
+		return false;
 	}
-	return false;
+	std::cout << "Username exists" << std::endl;
+	return true;
 
 
 }
@@ -221,7 +223,7 @@ std::string UserDB::select(Username username) {
 	sqlite3_stmt* statement;
 	int rc;
 	std::string sql = "SELECT username FROM " + USR + " WHERE username = '" + username.content + "';";
-	rc = sqlite3_prepare_v2(db, sql.c_str(), sql.length(), &statement, NULL);
+	rc = sqlite3_prepare_v2(db, sql.c_str(), int(sql.length()), &statement, NULL);
 	if (rc != SQLITE_OK) {
 		std::cout << "error in prepare statement" << std::endl;
 		std::cout << sql << std::endl;

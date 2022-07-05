@@ -1,6 +1,7 @@
 /*
 	Programmer: Jerusalem Moore
 	Class: UserDB
+	Date: 6/28/2022
 	Description:
 		Class for utilizing a sqlite3 db and making queries for user authentication
 		and account management

@@ -1,6 +1,7 @@
 /*
 	Programmer: Jerusalem Moore
 	Class: AccountInfo
+	Date: 6/28/2022
 	Description:
 		Class meant to hold individual account information
 		Information will be used to store and query a db
