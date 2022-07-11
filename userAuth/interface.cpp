@@ -35,7 +35,7 @@
 Interface::Interface() {
 	account = new AccountInfo();
 	userdb = new UserDB("userdb");
-	error = new Error();
+	messenger = new ErrMessenger();
 }
 
 /*
@@ -45,7 +45,7 @@ Interface::Interface() {
 Interface::~Interface() {
 	delete account;
 	delete userdb;
-	delete error;
+	delete messenger;
 }
 
 /*
@@ -64,7 +64,7 @@ bool Interface::usernameValid(std::string input) {
 			return false;
 		}
 		else if (choice != "n" && choice != "y") {
-			error->printError(error->INVALIDENTRY);
+			messenger->printError(INVALIDENTRY);
 		}
 		std::cin.clear();
 		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -72,7 +72,7 @@ bool Interface::usernameValid(std::string input) {
 	//rules for username
 	//length of 5+
 	if (input.length() < 5) {
-		error->printError(error->FIVECHAR);
+		messenger->printError(FIVECHAR);
 		return false;
 	}
 	return true;
@@ -84,7 +84,7 @@ bool Interface::usernameValid(std::string input) {
 bool Interface::checkUserExists(Username username) {
 	bool exists = userdb->usernameExists(username);
 	if (exists) {
-		error->printUserError(error->USERNAMEEXISTS, username.content);
+		messenger->printUserError(USERNAMEEXISTS, username.content);
 		//std::cout << "Username \"" << username.content << "\" already exists." << std::endl;
 	}
 	return exists;
@@ -94,47 +94,34 @@ bool Interface::checkUserExists(Username username) {
 	routine for retrieving a first name from user input
 	return false until first name is verified and cleaned
 */
-bool Interface::processFirstName() {
-	std::cout << "Please enter valid first name" << std::endl;
-	std::string firstName;
-	std::cin >> firstName;
+bool Interface::processFirstName(std::string firstName) {
+	
 	bool confirmed = confirmName(firstName, FIRST);
 	return confirmed;
 
 }
 
-bool Interface::processLastName() {
-	std::cout << "Please enter valid last name" << std::endl;
-	std::string lastName;
-	std::cin >> lastName;
+bool Interface::processLastName(std::string lastName) {
+
 	bool confirmed = confirmName(lastName, !FIRST);
 	return confirmed;
 }
 /*
 	get given username input and validate until valid one is produced
 */
-bool Interface::processUsername() {
-	std::string newUsername;
-	std::cout << "Please enter valid username" << std::endl;
-	std::cout << "/////////////////////////////" << std::endl;
-	std::cout << "Rules:" << std::endl;
-	std::cout << "\t1. only one word" << std::endl;
-	std::cout << "\t2. must be unique" << std::endl;
-	std::cout << "\t3. must be at least 5 characters" << std::endl;
-	std::cout << "//////////////////////////////" << std::endl;
-	std::cin >> newUsername;
-	Username username;
-	username.content = newUsername;
+bool Interface::processUsername(std::string username) {
+	Username usernameStruct;
+	usernameStruct.content = username;
 
-	bool valid = usernameValid(username.content);
+	bool valid = usernameValid(usernameStruct.content);
 	if (!valid) {
 		return valid;
 	}
-	bool unique = !checkUserExists(username);
+	bool unique = !checkUserExists(usernameStruct);
 	if (unique) {
 		std::cout << "username confirmed" << std::endl;
-		std::cout << username.content << std::endl;
-		account->setUsername(username.content);
+		std::cout << usernameStruct.content << std::endl;
+		account->setUsername(usernameStruct.content);
 		return true;
 	}
 	std::cout << "unique: " << unique << std::endl;
@@ -146,10 +133,37 @@ bool Interface::processUsername() {
 	run lastNameConfirmed until valid name is produced
 */
 void Interface::registerUser() {
+	std::string input;
 	std::cout << "Please enter requested credentials" << std::endl;
-	while (!processFirstName());
-	while (!processLastName());
-	while (!processUsername());
+	do {
+		std::cout << "Please enter valid first name" << std::endl;
+		//std::string firstName;
+		std::cin >> input;
+		if (input == "back") {
+			return;
+		}
+	} while (!processFirstName(input));
+	do {
+		std::cout << "Please enter valid last name" << std::endl;
+		std::cin >> input;
+		if (input == "back") {
+			return;
+		}
+	} while (!processLastName(input));
+	do {
+		std::string username;
+		std::cout << "Please enter valid username" << std::endl;
+		std::cout << "/////////////////////////////" << std::endl;
+		std::cout << "Rules:" << std::endl;
+		std::cout << "\t1. only one word" << std::endl;
+		std::cout << "\t2. must be unique" << std::endl;
+		std::cout << "\t3. must be at least 5 characters" << std::endl;
+		std::cout << "//////////////////////////////" << std::endl;
+		std::cin >> input;
+		if (input == "back") {
+			return;
+		}
+	} while (!processUsername(input));
 	std::cout << "Username to add to users table" << std::endl;
 	account->printData();
 	createAccount(account);
@@ -222,6 +236,10 @@ void Interface::home(AccountInfo* account) {
 			system("CLS");
 			break;
 		}
+		default: {
+			messenger->printError(INVALIDENTRY);
+			break;
+		}
 		}
 	}
 }
@@ -254,7 +272,7 @@ void Interface::runInterface() {
 			break;
 		}
 		default: {
-			error->printError(error->INVALIDENTRY);
+			messenger->printError(INVALIDENTRY);
 			std::cin.clear();
 			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 			break;
@@ -298,7 +316,7 @@ bool Interface::isNameAlpha(std::string name, bool first) {
 		//std::cout << "First name confirmed: " << firstName << std::endl;
 		return true;
 	}
-	error->printError(error->NONALPHA);
+	messenger->printError(NONALPHA);
 	return false;
 
 
@@ -328,7 +346,7 @@ bool Interface::confirmName(std::string name, bool isFirst) {
 			return false;
 		}
 		else {
-		error->printError(error->INVALIDENTRY);
+		messenger->printError(INVALIDENTRY);
 		}
 	}
 }

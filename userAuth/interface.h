@@ -12,7 +12,7 @@
 #include <windows.h>
 
 #include "accountInfo.h"
-#include "errorcode.h"
+#include "errmessenger.h"
 
 #include <limits>
 #include <algorithm> 
@@ -44,7 +44,7 @@ private:
 //	HANDLE hConsole;
 	AccountInfo* account;
 	UserDB* userdb;
-	Error* error;
+	ErrMessenger* messenger;
 	std::string cleanName(std::string name);
 	bool isNameAlpha(std::string firstName, bool type);
 	bool confirmName(std::string name, bool type);
@@ -53,9 +53,9 @@ private:
 	//void logout();
 	void home(AccountInfo* account);
 	//get and verify info from input
-	bool processFirstName();
-	bool processLastName();
-	bool processUsername();
+	bool processFirstName(std::string firstName);
+	bool processLastName(std::string lastName);
+	bool processUsername(std::string username);
 
 
 };

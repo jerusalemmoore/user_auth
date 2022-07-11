@@ -68,6 +68,9 @@ int UserDB::callback(void* notUsed, int argc, char** argv, char** azColName) {
 	printf("\n");
 	return 0;
 }
+/*
+	will likely need this for updating info
+*/
 void UserDB::updateData(std::string data) {
 
 }

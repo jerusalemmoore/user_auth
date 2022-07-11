@@ -2,13 +2,13 @@
 
 //th
 
-#include "errorcode.h"
+#include "errmessenger.h"
 #define WHITE 15
 #define RED 12
 /*
 	function for printing general users
 */
-void Error::printError(errorCode code)
+void ErrMessenger::printError(errorCode code)
 {
 	std::string error;
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -37,7 +37,7 @@ void Error::printError(errorCode code)
 /*
 	function for printing error related to user
 */
-void Error::printUserError(userErrorCode code, std::string username) {
+void ErrMessenger::printUserError(userErrorCode code, std::string username) {
 	std::string error; 
 
 	SetConsoleTextAttribute(hConsole, RED);

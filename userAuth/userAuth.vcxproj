@@ -104,10 +104,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Users\jerus\source\repos\userAuth\openssl\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\Users\jerus\source\repos\userAuth\openssl;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>C:\Users\jerus\source\repos\userAuth\openssl\libssl_static.lib;C:\Users\jerus\source\repos\userAuth\openssl\libcrypto_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -128,14 +131,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="accountInfo.cpp" />
-    <ClCompile Include="errorcode.cpp" />
+    <ClCompile Include="errmessenger.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="interface.cpp" />
+    <ClCompile Include="passwordprocessor.cpp" />
     <ClCompile Include="userdb.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="accountInfo.h" />
-    <ClInclude Include="errorcode.h" />
+    <ClInclude Include="errmessenger.h" />
+    <ClInclude Include="Header.h" />
     <ClInclude Include="interface.h" />
     <ClInclude Include="queryStructs.h" />
     <ClInclude Include="resource.h" />

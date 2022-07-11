@@ -12,10 +12,16 @@
 //#include "accountInfo.h"
 //#include "userdb.h"
 //#include "sqlite3.h"
+#pragma comment(lib, "crypt32")
+#pragma comment(lib, "ws2_32.lib")
 #define _CRTDBG_MAP_ALLOC
+#include <winsock2.h>
+#include <windows.h>
 #include <cstdlib>
 #include <crtdbg.h>
-
+#include "passwordprocessor.h"
+#include <bitset>
+#include <cstddef>
 
 
 #include "interface.h"
@@ -35,17 +41,25 @@ static int callback(void* data, int argc, char** argv, char** azColName) {
 ///YOU BUILT USERNAME SQL QUERY SEARCH(SHOULD CLEAN AND DOCUMENT)
 ///YOU NEED BETTER GENERALIZATION OF SELECT FUNC
 int main() {
-	
-	
-	Interface* myinterface = new Interface();
-	myinterface ->runInterface();
-	delete(myinterface);
 
+
+	/*Interface* myinterface = new Interface();
+	myinterface ->runInterface();
+	delete(myinterface);*/
+	PasswordProcessor* pprocessor = new PasswordProcessor();
+	delete(pprocessor);
+
+
+	/*if (!rc) {
+		std::cout << "There was an error..." << std::endl;
+	}*/
 	int leaking = _CrtDumpMemoryLeaks();
 	if (leaking) {
 		std::cout << "LEAKING\n\n\n" << std::endl;
 	}
-	
+	else {
+		std::cout << "no leaks" << std::endl;
+	}
 
 
 	return 0;

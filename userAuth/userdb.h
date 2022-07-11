@@ -29,10 +29,10 @@ private:
 	sqlite3* startDB(std::string dbname);
 	//sqlite3_stmt* select(std::vector<std::string> colNames, std::string tableName, std::string username);
 	//utilities for specific col/row val
-	std::string select(Firstname firstname);
-	std::string select(Lastname lastname);
+	/*std::string select(Firstname firstname);
+	std::string select(Lastname lastname);*/
 	std::string select(Username username);
-	std::string select(Id);
+	//std::string select(Id);
 	sqlite3* userdb;
 	void* data;
 	std::string dbname;
