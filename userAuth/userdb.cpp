@@ -14,7 +14,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
+//run with init table if you want to start fresh user table
+#define FRESH 1
 const std::string UserDB::USR = "USERS";
 
 
@@ -22,34 +23,47 @@ const std::string UserDB::USR = "USERS";
 //initlialize original schema for user table if it doesn't exist
 UserDB::UserDB(std::string dbname) {
 	this->dbname = dbname;
-	std::string sql = "DROP TABLE USERS";
-	sqlEx(sql);
+	passProcessor = new PasswordProcessor();
+	initTable(FRESH);
+}
+UserDB::~UserDB() {
+	delete passProcessor;
+}
+void UserDB::initTable(int fresh) {
+	std::string sql;
+	if (fresh) {
+		sql = "DROP TABLE IF EXISTS USERS";
+		sqlEx(sql);
+	}
 	sql =
-		"CREATE TABLE IF NOT EXISTS " + USR + "(\
-		username TEXT UNIQUE,\
-		firstname TEXT,\
-		lastname TEXT, \
-		id INTEGER PRIMARY KEY \
-		);";
+		"CREATE TABLE IF NOT EXISTS " + USR + "(\n"
+		"id INTEGER PRIMARY KEY,"
+		"firstname TEXT,\n"
+		"lastname TEXT, \n"
+		"username TEXT UNIQUE,\n"
+		"password TEXT, \n"
+		"salt TEXT UNIQUE\n"
+		");";
 	sqlEx(sql);
 	sql = "pragma table_info('USERS')";
 	sqlEx(sql);
-	sql = "\
-	INSERT INTO USERS (username, firstname, lastname)\
-	VALUES ('jerusalemmoore', 'jerusalem', 'moore')\
-		";
+	std::string salt = passProcessor->produceSalt();
+	std::string password = passProcessor->hash("JJjj@749847", salt);
+	sql = "\n"
+		"INSERT INTO USERS (username, firstname, lastname, password, salt)\n"
+		"VALUES ('jerusalemmoore', 'jerusalem', 'moore', '"+password+"', '"+salt+"'); \n";
+	
 	sqlEx(sql);
 	sql = "\
 	SELECT * FROM USERS\
 		";
 }
-UserDB::~UserDB() {
-
-}
-void UserDB::insertUser(std::string firstName, std::string lastName, std::string username) {
+void UserDB::insertUser(std::string firstName, std::string lastName, std::string username, std::string password) {
+	std::string salt = passProcessor->produceSalt();
+	std::string hashPass = passProcessor->hash(password, salt);
 	std::string sql = "\
-	INSERT INTO " + USR + " (firstname,lastname,username)\
-	VALUES ('" + firstName + "','" + lastName + "', '" + username + "')\
+	INSERT INTO " + USR + " (firstname,lastname,username,password,salt)\
+	VALUES ('" + firstName + "','" + lastName + "', '" + username + "','"+hashPass+"','" +salt+"')\
 	";
 	sqlEx(sql);
 	sql = "SELECT * FROM " + USR + ";";
@@ -58,14 +72,15 @@ void UserDB::insertUser(std::string firstName, std::string lastName, std::string
 //callback used for error handling sqlite3
 int UserDB::callback(void* notUsed, int argc, char** argv, char** azColName) {
 	int i;
-	//std::cout << "callback was called" << std::endl;
+	std::cout << "callback was called" << std::endl;
 	for (i = 0; i < argc; i++) {
 		printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
-		notUsed = (char*)argv[i];
+		
 	}
 	//std::cout << "val: " << (char*)data << std::endl;
 
 	printf("\n");
+	//exit(EXIT_FAILURE);
 	return 0;
 }
 /*
@@ -100,6 +115,7 @@ sqlite3* UserDB::startDB(std::string dbname) {
 //take dbname and a string to execute sql to our db. return true if succesful
 //open the db, enter a statement, and close the db after execution
 void UserDB::sqlEx(std::string statement) {
+	std::cout << "Running\n" << statement << std::endl;
 	sqlite3* db = startDB(dbname);
 	if (db == nullptr) {
 		std::cout << "error, startDB returned null" << std::endl;
@@ -110,6 +126,7 @@ void UserDB::sqlEx(std::string statement) {
 	if (rc != SQLITE_OK) {
 		fprintf(stderr, "SQL error: %s\n", zErrMsg);
 		sqlite3_free(zErrMsg);
+		exit(EXIT_FAILURE);
 	}
 	else {
 		//std::cout << "val: " << (char*)data << std::endl;

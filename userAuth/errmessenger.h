@@ -23,7 +23,12 @@
 enum errorCode {
 	FIVECHAR,
 	INVALIDENTRY,
-	NONALPHA
+	NONALPHA,
+	PASSWORDLENGTH,
+	NOUPPERCASE,
+	NOLOWERCASE,
+	NOSPECIAL,
+	NONUMBER
 
 };
 enum userErrorCode {
@@ -37,11 +42,12 @@ private:
 	const std::string fiveChar = "Error, entry should be at least 5 characters";
 	const std::string invalidEntry = "Invalid entry please try again...";
 	const std::string nonAlpha = "Error, name can only contain alphabetic characters";
-	
+	const std::string passwordLength = "Error, password must have length of at least 8";
+	const std::string noUppercase = "Error, password must contain an uppercase character";
+	const std::string noLowercase = "Error, password must contain a lowercase character";
+	const std::string noSymbol = "Error, password must contain a special symbol";
+	const std::string noNumber = "Error, password must contain a number";
 public:
-
-
-	
 	void printError(errorCode code);
 	void printUserError(userErrorCode code, std::string username);
 

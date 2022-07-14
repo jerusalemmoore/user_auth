@@ -11,6 +11,7 @@
 #include <string>
 #include <iostream> 
 #include <vector>
+#include "passwordprocessor.h"
 
 class UserDB{
 public:
@@ -23,8 +24,9 @@ public:
 	void dbhealthcheck();
 	void dbtest1();
 	void updateData(std::string data);
-	void insertUser(std::string firstName, std::string lastName, std::string username);
+	void insertUser(std::string firstName, std::string lastName, std::string username,std::string password);
 private:
+	void initTable(int fresh = 0);
 	//func for intializing db when making queries
 	sqlite3* startDB(std::string dbname);
 	//sqlite3_stmt* select(std::vector<std::string> colNames, std::string tableName, std::string username);
@@ -34,6 +36,8 @@ private:
 	std::string select(Username username);
 	//std::string select(Id);
 	sqlite3* userdb;
+	PasswordProcessor* passProcessor;
+
 	void* data;
 	std::string dbname;
 	std::string tblname;

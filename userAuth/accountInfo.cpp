@@ -28,7 +28,17 @@ AccountInfo::AccountInfo() {
 AccountInfo::~AccountInfo() {
 
 }
-
+void AccountInfo::clean() {
+	this->firstName = "";
+	this->lastName = "";
+	this->username = "";
+}
+bool AccountInfo::isClear() {
+	if ((firstName.empty() && lastName.empty() && username.empty())) {
+		return true;
+	}
+	return false;
+}
 /*
 	set accountInfo firstname private member to firstname val
 	input:

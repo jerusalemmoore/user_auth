@@ -24,8 +24,23 @@ void ErrMessenger::printError(errorCode code)
 	case NONALPHA:
 		error = nonAlpha;
 		break;
+	case PASSWORDLENGTH:
+		error = passwordLength;
+		break;
+	case NOUPPERCASE:
+		error = noUppercase;
+		break;
+	case NOLOWERCASE:
+		error = noLowercase;
+		break;
+	case NOSPECIAL:
+		error = noSymbol;
+		break;
+	case NONUMBER:
+		error = noNumber;
+		break;
 	default:
-		std::cout << "INVALID ERROR CODE: " << code << std::endl;
+		std::cout << "INVALID INTERFACE ERROR CODE: " << code << std::endl;
 		SetConsoleTextAttribute(hConsole, WHITE);
 		exit(EXIT_FAILURE);
 		break;

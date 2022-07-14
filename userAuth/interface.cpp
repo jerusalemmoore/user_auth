@@ -82,12 +82,7 @@ bool Interface::usernameValid(std::string input) {
 	check if there is account linked to given username
 */
 bool Interface::checkUserExists(Username username) {
-	bool exists = userdb->usernameExists(username);
-	if (exists) {
-		messenger->printUserError(USERNAMEEXISTS, username.content);
-		//std::cout << "Username \"" << username.content << "\" already exists." << std::endl;
-	}
-	return exists;
+	return userdb->usernameExists(username);
 }
 
 /*
@@ -95,14 +90,12 @@ bool Interface::checkUserExists(Username username) {
 	return false until first name is verified and cleaned
 */
 bool Interface::processFirstName(std::string firstName) {
-	
 	bool confirmed = confirmName(firstName, FIRST);
 	return confirmed;
 
 }
 
 bool Interface::processLastName(std::string lastName) {
-
 	bool confirmed = confirmName(lastName, !FIRST);
 	return confirmed;
 }
@@ -112,7 +105,6 @@ bool Interface::processLastName(std::string lastName) {
 bool Interface::processUsername(std::string username) {
 	Username usernameStruct;
 	usernameStruct.content = username;
-
 	bool valid = usernameValid(usernameStruct.content);
 	if (!valid) {
 		return valid;
@@ -124,9 +116,68 @@ bool Interface::processUsername(std::string username) {
 		account->setUsername(usernameStruct.content);
 		return true;
 	}
-	std::cout << "unique: " << unique << std::endl;
+	messenger->printUserError(USERNAMEEXISTS, username);
+	//std::cout << "unique val: " << unique << std::endl;
 	return false;
 	//return true;
+}
+/*
+	check if password passes rules 
+	1. must have length of 8 characters
+	2. must have both uppercase and lowercase characters
+	3. must include numbers (1,2,3...)
+	4. must include a special symbol (!,@,#...)
+*/
+
+bool Interface::processPassword(std::string password) {
+	bool upper, lower, number, special, length;
+	length = false;
+	upper = false;
+	lower = false;
+	number = false;
+	special = false;
+	if (password.length() >= 8) {
+		length = true;
+	}
+	for (int i = 0; i < password.length(); i++) {
+		if (isupper(password[i])) {
+			std::cout << "upper case present" << std::endl;
+			upper = true;
+		}
+		if (islower(password[i])) {
+			std::cout << "lower case present" << std::endl;
+			lower = true;
+		}
+		if (isdigit(password[i])) {
+			std::cout << "num present" << std::endl;
+			number = true;
+		}
+		if (!isdigit(password[i]) && !isalpha(password[i])) {
+			if (!isspace(password[i])) {//don't count whitespace as special char
+				std::cout << "special char present" << std::endl;
+				special = true;
+			}
+		}
+	}
+	if (upper && lower && number && special) {
+		return true;
+	}
+	if (!length) {
+		messenger->printError(PASSWORDLENGTH);
+	}
+	if (!upper) {
+		messenger->printError(NOUPPERCASE);
+	}
+	if (!lower) {
+		messenger->printError(NOLOWERCASE);
+	}
+	if (!number) {
+		messenger->printError(NONUMBER);
+	}
+	if (!special) {
+		messenger->printError(NOSPECIAL);
+	}
+	return false;
 }
 /*
 	run firstNameConfirmed until valid name is produced
@@ -134,22 +185,27 @@ bool Interface::processUsername(std::string username) {
 */
 void Interface::registerUser() {
 	std::string input;
-	std::cout << "Please enter requested credentials" << std::endl;
+	std::cout << "Please enter requested credentials (or type \"back\" to go back)" << std::endl;
+	
 	do {
 		std::cout << "Please enter valid first name" << std::endl;
 		//std::string firstName;
 		std::cin >> input;
 		if (input == "back") {
+			account->clean();
 			return;
 		}
 	} while (!processFirstName(input));
+	
 	do {
 		std::cout << "Please enter valid last name" << std::endl;
 		std::cin >> input;
 		if (input == "back") {
+			account->clean();
 			return;
 		}
 	} while (!processLastName(input));
+	
 	do {
 		std::string username;
 		std::cout << "Please enter valid username" << std::endl;
@@ -161,20 +217,39 @@ void Interface::registerUser() {
 		std::cout << "//////////////////////////////" << std::endl;
 		std::cin >> input;
 		if (input == "back") {
+			account->clean();
 			return;
 		}
 	} while (!processUsername(input));
+	//
+	do {
+		std::cout << "Please enter valid password" << std::endl;
+		std::cout << "/////////////////////////////" << std::endl;
+		std::cout << "Rules:" << std::endl;
+		std::cout << "\t1. must have length of 8 characters" << std::endl;
+		std::cout << "\t2. must have both uppercase and lowercase characters" << std::endl;
+		std::cout << "\t3. must include numbers (1,2,3...)" << std::endl;
+		std::cout << "\t4. must include a special symbol (!,@,#...)" << std::endl;
+		std::cout << "/////////////////////////////" << std::endl;
+		std::getline(std::cin, input);
+		if (input == "back") {
+			account->clean();
+			return;
+		}
+	} while (!processPassword(input));
+	std::string password = input;
+	std::cout << "Assigning password: " << password << std::endl;
 	std::cout << "Username to add to users table" << std::endl;
 	account->printData();
-	createAccount(account);
+	createAccount(account, password);
 	return;
 
 }
 /*
 	Use account credentials to access individual account
 */
-void Interface::createAccount(AccountInfo* account) {
-	userdb->insertUser(account->getFirstName(), account->getLastName(), account->getUsername());
+void Interface::createAccount(AccountInfo* account, std::string password) {
+	userdb->insertUser(account->getFirstName(), account->getLastName(), account->getUsername(), password);
 	std::cout << "User " << account->getUsername() << " registered" << std::endl;
 	std::cout << "Navigating to user home..." << std::endl;
 	Sleep(3000);
@@ -183,10 +258,16 @@ void Interface::createAccount(AccountInfo* account) {
 /*
 	check if account with unique username exists
 */
-bool Interface::exists(Username username) {
-	return userdb->usernameExists(username);
+//bool Interface::exists(Username username) {
+//	return userdb->usernameExists(username);
+//}
+/*
+	NEXT STEP...
+	given the username and password find user and check if password matches the account
+*/
+bool tryPassword(std::string username, std::string password) {
+	return true;
 }
-
 //gather account info through login
 /*
 	in progress...
@@ -206,17 +287,19 @@ void Interface::login() {
 		std::cout << std::endl;
 		std::cout << "Password: ";
 		std::cin >> password;
-		if (!(exists(username) && (password == "Aa98064203"))) {
+		//if user doesn't exist or try password fails 
+		if (!checkUserExists(username) || !tryPassword(username.content, password)) {
 			std::cout << "Error, Username/Password combination incorrect" << std::endl;
 		}
-		std::cout << exists(username) << std::endl;;
+		std::cout << checkUserExists(username) << std::endl;;
 		std::cout << (password == "Aa98064203") << std::endl;
-	} while (!(exists(username) && (password == "Aa98064203")));
+	} while (!(checkUserExists(username) && (password == "Aa98064203")));
 	std::cout << "Logging in..." << std::endl;
 
 }
+
 void Interface::home(AccountInfo* account) {
-	system("CLS");
+	//system("CLS");
 	int input = -1;
 	while (input != LOGOUT) {
 		std::cout << "----------------------------------------------------" << std::endl;
@@ -234,6 +317,7 @@ void Interface::home(AccountInfo* account) {
 		}
 		case 2: {
 			system("CLS");
+			account->clean();
 			break;
 		}
 		default: {
@@ -250,6 +334,11 @@ void Interface::home(AccountInfo* account) {
 void Interface::runInterface() {
 	int userInput = -1;
 	do {
+		if (!account->isClear()) {
+			std::cout << "Error, user info should be clear if on this menu...\n" << std::endl;
+			exit(EXIT_FAILURE);
+		}
+		
 		std::cout << "----------------------------------------------------" << std::endl;
 		std::cout << "User Authentication System" << std::endl;
 		std::cout << "----------------------------------------------------" << std::endl;

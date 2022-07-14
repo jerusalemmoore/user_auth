@@ -31,7 +31,9 @@ public:
 	void setLastName(std::string lastName);
 	void setUsername(std::string username);
 	void printFullName();
+	void clean();
 	void printData();
+	bool isClear();
 private:
 	std::string firstName;
 	std::string lastName;

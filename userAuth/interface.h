@@ -35,8 +35,8 @@ public:
 	//enumeration implementation of error printing
 	
 	bool checkUserExists(Username username);
-	bool exists(Username username);
 	bool usernameValid(std::string input);
+	bool passwordValid(std::string input);
 
 	void login();
 private:
@@ -49,13 +49,14 @@ private:
 	bool isNameAlpha(std::string firstName, bool type);
 	bool confirmName(std::string name, bool type);
 	//bool confirmUsername(Username username);
-	void createAccount(AccountInfo* account);
+	void createAccount(AccountInfo* account, std::string password);
 	//void logout();
 	void home(AccountInfo* account);
 	//get and verify info from input
 	bool processFirstName(std::string firstName);
 	bool processLastName(std::string lastName);
 	bool processUsername(std::string username);
+	bool processPassword(std::string password);
 
 
 };
