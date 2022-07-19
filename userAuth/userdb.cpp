@@ -11,9 +11,7 @@
 
 
 #include "userdb.h"
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+
 //run with init table if you want to start fresh user table
 #define FRESH 1
 const std::string UserDB::USR = "USERS";
@@ -24,7 +22,7 @@ const std::string UserDB::USR = "USERS";
 UserDB::UserDB(std::string dbname) {
 	this->dbname = dbname;
 	passProcessor = new PasswordProcessor();
-	initTable(FRESH);
+	initTable(FRESH);//initialize a "fresh" table with only one user
 }
 UserDB::~UserDB() {
 	delete passProcessor;
@@ -221,6 +219,78 @@ bool UserDB::usernameExists(Username username) {
 
 
 }
+//sqlite3_stmt* UserDB::stmtPrep(std::string stmt) {
+//
+//}
+/*
+	function for simplifying sql statment prep that includes error 
+	checking
+*/
+sqlite3_stmt* UserDB::sqlPrep(sqlite3* db, std::string stmt) {
+	sqlite3_stmt* statement;
+	int rc;
+	rc = sqlite3_prepare_v2(db, stmt.c_str(), int(stmt.length()), &statement, NULL);
+	if (rc != SQLITE_OK) {
+		std::cout << "error in prepare statement:" << std::endl;
+		std::cout << stmt << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	return statement;
+	//search execute sql username search 
+	
+}
+bool UserDB::sqlStep(sqlite3* db, sqlite3_stmt* stmt) {
+	int rc = sqlite3_step(stmt);
+	//if we get nothing it means username doesn't match
+	if (rc != SQLITE_ROW) {
+		sqlite3_finalize(stmt);
+		sqlite3_close(db);
+		//std::cout << "ERROR, no entries found" << std::endl;
+		return false;
+	}
+	return true;
+}
+/*
+	verify username/password combination exist in userdb, if so
+	link account info from db to account 
+	input:
+		username to link with password
+		password to validate account
+		account to link db info to if username/password combo exists
+	output:
+		bool -> true if username/password combo exists
+*/
+bool UserDB::validateAccount(Username username, std::string password, AccountInfo* account) {
+	if (!usernameExists(username)) {
+		return false;
+	}
+	sqlite3* db = startDB(dbname);
+	std::string sql =
+		"SELECT username,salt FROM " + USR +
+		" WHERE username = '" + username.content + "';";
+	sqlite3_stmt* statement = sqlPrep(db, sql);
+	if (!sqlStep(db, statement)) {
+		return false;
+	}
+	std::string salt ((char*)sqlite3_column_text(statement, 1));
+	std::string hashPass = passProcessor->hash(password, salt);
+	sqlite3_finalize(statement);
+	sql =
+		"SELECT username,firstname,lastname FROM " + USR +
+		" WHERE password = '" + hashPass + "';";
+	statement = sqlPrep(db, sql);
+	if (!sqlStep(db, statement)) {
+		return false;
+	}
+	std::string firstname((char*)sqlite3_column_text(statement, 1));
+	std::string lastname((char*)sqlite3_column_text(statement, 2));
+	account->setUsername(username.content);
+	account->setFirstName(firstname);
+	account->setLastName(lastname);
+	sqlite3_finalize(statement);
+	sqlite3_close(db);
+	return true;
+}
 //return name of dbfile
 std::string UserDB::getid() {
 	return this->dbname;
@@ -266,6 +336,7 @@ std::string UserDB::select(Username username) {
 	return copy;
 	//const unsigned char*  = sqlite3_column_text(statement, 0);
 }
+
 //sqlite3_stmt* UserDB::select(firstname firstname) {
 //	sqlite3* db = startDB(dbname);
 //	sqlite3_stmt* statement;

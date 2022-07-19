@@ -6,7 +6,7 @@
 #define WHITE 15
 #define RED 12
 /*
-	function for printing general users
+	function for printing general errors in Interface
 */
 void ErrMessenger::printError(errorCode code)
 {
@@ -39,6 +39,9 @@ void ErrMessenger::printError(errorCode code)
 	case NONUMBER:
 		error = noNumber;
 		break;
+	case LOGINFAILED:
+		error = loginFailed;
+		break;
 	default:
 		std::cout << "INVALID INTERFACE ERROR CODE: " << code << std::endl;
 		SetConsoleTextAttribute(hConsole, WHITE);
@@ -50,22 +53,20 @@ void ErrMessenger::printError(errorCode code)
 	SetConsoleTextAttribute(hConsole, WHITE);
 }
 /*
-	function for printing error related to user
+	function for printing errors related to user
 */
 void ErrMessenger::printUserError(userErrorCode code, std::string username) {
 	std::string error; 
-
+	if (username.empty()) {
+		std::cout << "HOLD ON, I THINK SOMETHING WENT WRONG!!!" << std::endl;
+		std::cout << "USERNAME SHOULD BE INITIALIZED WITH VALUE" << std::endl;
+		exit(EXIT_FAILURE);
+	}
 	SetConsoleTextAttribute(hConsole, RED);
 	switch (code) {
 	case USERNAMEEXISTS:
-		if (username.empty()) {
-			std::cout << "HOLD ON, I THINK SOMETHING WENT WRONG!!!" << std::endl;
-			std::cout << "USERNAME SHOULD BE INITIALIZED WITH VALUE" << std::endl;
-			exit(EXIT_FAILURE);
-		}
 		error = "Username \"" + username + "\" already exists.";
 		break;
-
 	default:
 		std::cout << "INVALID ERROR CODE: " << code << std::endl;
 		break;

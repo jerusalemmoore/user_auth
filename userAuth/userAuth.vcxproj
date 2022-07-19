@@ -144,7 +144,6 @@
     <ClInclude Include="interface.h" />
     <ClInclude Include="passwordprocessor.h" />
     <ClInclude Include="queryStructs.h" />
-    <ClInclude Include="resource.h" />
     <ClInclude Include="userdb.h" />
   </ItemGroup>
   <ItemGroup>

@@ -28,11 +28,18 @@ AccountInfo::AccountInfo() {
 AccountInfo::~AccountInfo() {
 
 }
+/*
+	clear all data inside accountInfo
+	used for clearing info when current user logs out 
+*/
 void AccountInfo::clean() {
 	this->firstName = "";
 	this->lastName = "";
 	this->username = "";
 }
+/*
+	check if all data in AccountInfo is empty
+*/
 bool AccountInfo::isClear() {
 	if ((firstName.empty() && lastName.empty() && username.empty())) {
 		return true;

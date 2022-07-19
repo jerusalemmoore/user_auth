@@ -28,11 +28,12 @@ enum errorCode {
 	NOUPPERCASE,
 	NOLOWERCASE,
 	NOSPECIAL,
-	NONUMBER
-
+	NONUMBER,
+	LOGINFAILED
 };
 enum userErrorCode {
-	USERNAMEEXISTS
+	USERNAMEEXISTS,
+	
 };
 class ErrMessenger {
 
@@ -47,6 +48,7 @@ private:
 	const std::string noLowercase = "Error, password must contain a lowercase character";
 	const std::string noSymbol = "Error, password must contain a special symbol";
 	const std::string noNumber = "Error, password must contain a number";
+	const std::string loginFailed = "Error, Username / Password combination incorrect";
 public:
 	void printError(errorCode code);
 	void printUserError(userErrorCode code, std::string username);

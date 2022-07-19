@@ -16,15 +16,6 @@ using std::string; using std::hex;
 using std::stringstream;
 PasswordProcessor::PasswordProcessor() {
     mdctx = EVP_MD_CTX_new();
- /*   std::string mess1 = "Test Message";
-    std::string mess2 = "Test Message";
-    std::string salt = "Wed Jul 13 11:43:43 2022";
-    std::string hash1 = hash(mess1, salt);
-    std::cout << hash1 << std::endl;
-    std::string hash2 = hash(mess2, salt);
-    if (hash1 == hash2) {
-        std::cout << "success" << std::endl;
-    }*/
     
 }
 PasswordProcessor::~PasswordProcessor() {
@@ -46,7 +37,7 @@ std::string PasswordProcessor::hash(std::string password, std::string salt) {
     unsigned char md[EVP_MAX_MD_SIZE];//buffer for message digest
     EVP_DigestFinal_ex(mdctx, md, &mdlen);//store result and size of processed message digest
     std::stringstream stream;//stream for translating processed md to hexadecimal
-    for (int i = 0; i < mdlen; i++) {
+    for (unsigned int i = 0; i < mdlen; i++) {
         stream <<  std::hex << int(md[i]);//convert to hexadecimal
     }
     
@@ -70,7 +61,7 @@ std::string PasswordProcessor::produceSalt() {
     unsigned char md[EVP_MAX_MD_SIZE];//buffer for message digest
     EVP_DigestFinal_ex(mdctx, md, &mdlen);//process salt
     std::stringstream stream;//stream for translating processed md to hexadecimal
-    for (int i = 0; i < mdlen; i++) {
+    for (unsigned int i = 0; i < mdlen; i++) {
         stream << std::hex << int(md[i]);
     }
     std::string salt = stream.str();

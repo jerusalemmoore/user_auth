@@ -13,21 +13,6 @@
 #define FIRST true //flag for processing string as first name in functions
 #define LOGOUT 2
 
-
-
-/*
-	Should change error messaging to behave differently depending on given code
-*/
-//void Interface::printError(std::string errMsg) {
-//	SetConsoleTextAttribute(hConsole, RED);
-//	std::cout << errMsg << std::endl;
-//	SetConsoleTextAttribute(hConsole, WHITE);
-//}
-//void Interface::printError(Username username) {
-//	SetConsoleTextAttribute(hConsole, RED);
-//	std::cout << "Username \"" << username.content << "\" already exists." << std::endl;
-//}
-
 /*
 	initialize account info class for holding logged in user info
 	access userdb sqlite3 file
@@ -128,7 +113,6 @@ bool Interface::processUsername(std::string username) {
 	3. must include numbers (1,2,3...)
 	4. must include a special symbol (!,@,#...)
 */
-
 bool Interface::processPassword(std::string password) {
 	bool upper, lower, number, special, length;
 	length = false;
@@ -246,7 +230,13 @@ void Interface::registerUser() {
 
 }
 /*
-	Use account credentials to access individual account
+	Use account credentials to store to userdb,
+	enter home menu 
+	input: 
+		account holding required info to store to db
+		password to store to db, don't want this to be available after 
+			registration 
+
 */
 void Interface::createAccount(AccountInfo* account, std::string password) {
 	userdb->insertUser(account->getFirstName(), account->getLastName(), account->getUsername(), password);
@@ -255,28 +245,39 @@ void Interface::createAccount(AccountInfo* account, std::string password) {
 	Sleep(3000);
 	home(account);
 }
+
 /*
-	check if account with unique username exists
+	Check if there is an account linked to username and password
+	combination
+	input: 
+		username to query with password
+		password to query with username
+	return 
+		true if combination exists
+		false otherwise
 */
-//bool Interface::exists(Username username) {
-//	return userdb->usernameExists(username);
-//}
-/*
-	NEXT STEP...
-	given the username and password find user and check if password matches the account
-*/
-bool tryPassword(std::string username, std::string password) {
-	return true;
+bool Interface::tryPassword(Username username, std::string password) {
+	if (userdb->validateAccount(username, password, account)) {
+		//print account info for verification
+		account->printData();
+		return true;
+	}
+	return false;
 }
 //gather account info through login
 /*
 	in progress...
+*/
+
+/*
+	Begin login process
 */
 void Interface::login() {
 	std::string input;
 
 	Username username;
 	std::string password;
+	bool passwordConfirmed;
 	do {
 		std::cout << "----------------------------------------------------" << std::endl;
 		std::cout << "Please Enter Requested Login Credentials" << std::endl;
@@ -288,16 +289,27 @@ void Interface::login() {
 		std::cout << "Password: ";
 		std::cin >> password;
 		//if user doesn't exist or try password fails 
-		if (!checkUserExists(username) || !tryPassword(username.content, password)) {
-			std::cout << "Error, Username/Password combination incorrect" << std::endl;
+		passwordConfirmed = tryPassword(username, password);
+		if (!passwordConfirmed) {
+			//std::cout << "Error, Username/Password combination incorrect" << std::endl;
+			messenger->printError(LOGINFAILED);
 		}
-		std::cout << checkUserExists(username) << std::endl;;
-		std::cout << (password == "Aa98064203") << std::endl;
-	} while (!(checkUserExists(username) && (password == "Aa98064203")));
+	/*	std::cout << checkUserExists(username) << std::endl;;
+		std::cout << (password == "Aa98064203") << std::endl;*/
+	} while (!passwordConfirmed);
 	std::cout << "Logging in..." << std::endl;
+	Sleep(3000);
+	home(account);
+
 
 }
 
+/*
+	Entry point for home menu
+	input:
+		account with linked information
+
+*/
 void Interface::home(AccountInfo* account) {
 	//system("CLS");
 	int input = -1;
@@ -445,14 +457,14 @@ bool Interface::confirmName(std::string name, bool isFirst) {
 	input:
 	string name
 */
-void Interface::checkdb() {
-	userdb->dbhealthcheck();
-}
+//void Interface::checkdb() {
+//	userdb->dbhealthcheck();
+//}
 
 //print account information
 void Interface::checkAccount() {
-	account->printFullName();
+	account->printData();
 }
-void Interface::dbStat() {
-
-}
+//void Interface::dbStat() {
+//
+//}
