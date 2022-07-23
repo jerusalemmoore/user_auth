@@ -9,6 +9,7 @@
 #pragma once
 #include "interface.h"
 #include <synchapi.h>
+#include "errhandlingapi.h"
 //#include "errormsg.cpp"
 #define FIRST true //flag for processing string as first name in functions
 #define LOGOUT 2
@@ -168,6 +169,8 @@ bool Interface::processPassword(std::string password) {
 	run lastNameConfirmed until valid name is produced
 */
 void Interface::registerUser() {
+
+		
 	std::string input;
 	std::cout << "Please enter requested credentials (or type \"back\" to go back)" << std::endl;
 	
@@ -205,27 +208,33 @@ void Interface::registerUser() {
 			return;
 		}
 	} while (!processUsername(input));
-	//
+	bool confirmed = false;
 	do {
-		std::cout << "Please enter valid password" << std::endl;
-		std::cout << "/////////////////////////////" << std::endl;
-		std::cout << "Rules:" << std::endl;
-		std::cout << "\t1. must have length of 8 characters" << std::endl;
-		std::cout << "\t2. must have both uppercase and lowercase characters" << std::endl;
-		std::cout << "\t3. must include numbers (1,2,3...)" << std::endl;
-		std::cout << "\t4. must include a special symbol (!,@,#...)" << std::endl;
-		std::cout << "/////////////////////////////" << std::endl;
-		std::getline(std::cin, input);
-		if (input == "back") {
-			account->clean();
-			return;
-		}
-	} while (!processPassword(input));
+		std::string prompt =
+			"Please enter valid password\n"
+			"/////////////////////////////\n"
+			"Rules:\n"
+			"\t1. must have length of 8 characters\n"
+			"\t2. must have both uppercase and lowercase characters\n"
+			"\t3. must include numbers (1,2,3...)\n"
+			"\t4. must include a special symbol (!,@,#...)\n"
+			"/////////////////////////////";
+		std::string password = requestPassword(prompt);
+		
+		confirmed = passwordConfirmed(password);
+		/*if (!confirmed) {
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+		}*/
+		
+	} while (!confirmed);
 	std::string password = input;
 	std::cout << "Assigning password: " << password << std::endl;
 	std::cout << "Username to add to users table" << std::endl;
 	account->printData();
 	createAccount(account, password);
+	/*std::cin.clear();
+	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');*/
 	return;
 
 }
@@ -245,7 +254,60 @@ void Interface::createAccount(AccountInfo* account, std::string password) {
 	Sleep(3000);
 	home(account);
 }
+std::string Interface::requestPassword(std::string prompt) {
+	std::cout << prompt << std::endl;
+	std::string input;
+	const char BACKSPACE = 8;
+	const char RETURN = 13;
+	unsigned char ch = 0;
+	DWORD con_mode;
+	DWORD dwRead;
+	HANDLE hIn = GetStdHandle(STD_INPUT_HANDLE);
+	if (GetConsoleMode(hIn, &con_mode) == 0) {
+		std::cout << "get console error: " << GetLastError() << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	std::cout << "console mode: " << con_mode << std::endl;
+	if (SetConsoleMode(hIn, con_mode & ~(ENABLE_ECHO_INPUT | ENABLE_LINE_INPUT)) == 0) {
+		std::cout << "set console error: " << GetLastError() << std::endl;
+	
+}
+	while (ReadConsoleA(hIn, &ch, 1, &dwRead, NULL) && ch != RETURN) {
+		if (ch == BACKSPACE) {
+			if (input.length() != 0) {
+				std::cout << "\b \b";
+				input.resize(input.length() - 1);
 
+			}
+		}
+		else {
+			input += ch;
+			std::cout << '*';
+		}
+	}
+	std::cout << std::endl;
+	SetConsoleMode(hIn, con_mode & (ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT | ENABLE_PROCESSED_INPUT));
+	if (GetConsoleMode(hIn, &con_mode) == 0) {
+		std::cout << "get console error: " << GetLastError() << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	std::cout << "console mode: " << con_mode << std::endl;
+	return input;
+}
+bool Interface::passwordConfirmed(std::string password) {
+	std::string prompt = "Please reenter password";
+	std::string input = requestPassword(prompt);
+	std::cout << "password: " << password << std::endl;
+	std::cout << "input: " << input << std::endl;
+	if (input == password) {
+		if (processPassword(password)) {
+			return true;
+		}
+		return false;
+	}
+	messenger->printError(PASSWORDMATCH);
+	return false;
+}
 /*
 	Check if there is an account linked to username and password
 	combination
@@ -262,6 +324,7 @@ bool Interface::tryPassword(Username username, std::string password) {
 		account->printData();
 		return true;
 	}
+	messenger->printError(LOGINFAILED);
 	return false;
 }
 //gather account info through login
@@ -277,6 +340,7 @@ void Interface::login() {
 
 	Username username;
 	std::string password;
+	bool passwordSuccess;
 	bool passwordConfirmed;
 	do {
 		std::cout << "----------------------------------------------------" << std::endl;
@@ -289,14 +353,14 @@ void Interface::login() {
 		std::cout << "Password: ";
 		std::cin >> password;
 		//if user doesn't exist or try password fails 
-		passwordConfirmed = tryPassword(username, password);
-		if (!passwordConfirmed) {
-			//std::cout << "Error, Username/Password combination incorrect" << std::endl;
-			messenger->printError(LOGINFAILED);
-		}
+		//passwordSuccess = tryPassword(username, password);
+		//if (!passwordConfirmed) {
+		//	//std::cout << "Error, Username/Password combination incorrect" << std::endl;
+		//	messenger->printError(LOGINFAILED);
+		//}
 	/*	std::cout << checkUserExists(username) << std::endl;;
 		std::cout << (password == "Aa98064203") << std::endl;*/
-	} while (!passwordConfirmed);
+	} while (!tryPassword(username,password));
 	std::cout << "Logging in..." << std::endl;
 	Sleep(3000);
 	home(account);

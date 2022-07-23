@@ -38,6 +38,8 @@ private:
 	void createAccount(AccountInfo* account, std::string password);
 	bool checkUserExists(Username username);
 	bool usernameValid(std::string input);
+	bool passwordConfirmed(std::string password);
+	std::string requestPassword(std::string prompt);
 	bool passwordValid(std::string input);
 	void home(AccountInfo* account);
 	void checkAccount();

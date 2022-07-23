@@ -22,28 +22,52 @@
 #include <bitset>
 #include <cstddef>
 
-
 #include "interface.h"
 #include "queryStructs.h"
-static int callback(void* data, int argc, char** argv, char** azColName) {
-	int i;
-	fprintf(stderr, "%s: \n", (const char*)data);
-	for (i = 0; i < argc; i++) {
-		printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
-	}
-	printf("\n");
-	return 0;
-}
+
 void myFunc() {
-	std::string password = "Jerusaelm@moore 1";
+	//while (true)
+	//{
+	//	if (GetAsyncKeyState(VK_ESCAPE))
+	//	{
+	//		std::cout << "DUDE! You've pressed the escape key";
+	//		//std::cin.ignore();
+	//	}
+	//}
 	Interface* myinterface = new Interface();
 	myinterface->runInterface();
 	delete(myinterface);
+
+	///WINDOWS PASSWORD HIDING
+	/*const char BACKSPACE = 8;
+	const char RETURN = 13;
+	std::string password;
+	unsigned char ch = 0;
+	std::cout << "Enter password" << std::endl;
+	DWORD con_mode;
+	DWORD dwRead;
+	HANDLE hIn = GetStdHandle(STD_INPUT_HANDLE);
+	GetConsoleMode(hIn, &con_mode);
+	SetConsoleMode(hIn, con_mode & ~(ENABLE_ECHO_INPUT | ENABLE_LINE_INPUT));
+	while (ReadConsoleA(hIn, &ch, 1, &dwRead, NULL) && ch != RETURN) {
+		if (ch == BACKSPACE) {
+			if (password.length() != 0) {
+				std::cout << "\b \b";
+				password.resize(password.length() - 1);
+			}
+			
+		}
+		else {
+			password += ch;
+			std::cout << '*';
+		}
+	}*/
 }
 /// THIS IS WHAT WE'RE DOING
 /// //////////////////////////////
-///YOU BUILT USERNAME SQL QUERY SEARCH(SHOULD CLEAN AND DOCUMENT)
-///YOU NEED BETTER GENERALIZATION OF SELECT FUNC
+///ADD PASSWORD CONFIRMATION THAT REQUIRES TWO ENTRIES OF PASSWORD
+///ADD TEXT HIDING OF PASSWORD ENTRY   
+///NEED TO BUILD FUNCTION THAT ALLOWS ACCOUNT EDITING
 int main() {
 
 

@@ -42,6 +42,9 @@ void ErrMessenger::printError(errorCode code)
 	case LOGINFAILED:
 		error = loginFailed;
 		break;
+	case PASSWORDMATCH:
+		error = passwordMatch;
+		break;
 	default:
 		std::cout << "INVALID INTERFACE ERROR CODE: " << code << std::endl;
 		SetConsoleTextAttribute(hConsole, WHITE);
