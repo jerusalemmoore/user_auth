@@ -13,5 +13,6 @@ Goal is to create a user account creation and authentication system with c++
     - store user info to db, users have a unique username   
     - user can edit account information after registration
 
-![userAuth system](https://user-images.githubusercontent.com/43590688/173268367-0fdabf91-08bb-461a-b8d7-e533f5f37573.jpg)
+
+![userAuth system (1)](https://user-images.githubusercontent.com/43590688/180716428-710a3d2d-09da-4300-9c84-860476031c02.jpg)
 
