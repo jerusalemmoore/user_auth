@@ -5,10 +5,10 @@ Goal is to create a user account creation and authentication system with c++
     - persistent storage of info to db(sqlite3 currently)  
     - create interface allowing user to create account  
     &emsp;- account includes  
-    &emsp;- firstname  
-    &emsp;- lastname  
-    &emsp;- username(unique)  
-    &emsp;- password  
+    &emsp;&emsp;- firstname  
+    &emsp;&emsp;- lastname  
+    &emsp;&emsp;- username(unique)  
+    &emsp;&emsp;- password  
     - account authentication for login  
     - store user info to db, users have a unique username   
     - user can edit account information after registration
