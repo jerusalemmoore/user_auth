@@ -16,7 +16,7 @@
 #include <stdlib.h>
 #include <iostream> 
 #include <vector>
-
+#include <fstream>
 
 class UserDB{
 public:
@@ -30,8 +30,12 @@ public:
 	void insertUser(std::string firstName, std::string lastName, std::string username,std::string password);
 	bool validateAccount(Username username, std::string password, AccountInfo* account);
 	bool usernameExists(Username username);
-
+	void changeFirstname(AccountInfo* account, std::string newFirstname);
+	void changeLastname(AccountInfo* account, std::string newLastname);
+	void changeUsername(AccountInfo* account, std::string newUsername);
+	void changePassword(AccountInfo* account, std::string newPassword);
 private:
+	std::ofstream logFile;
 	sqlite3_stmt* sqlPrep(sqlite3* db, std::string stmt);
 	bool sqlStep(sqlite3* db, sqlite3_stmt* stmt);
 	void initTable(int fresh = 0);

@@ -4,7 +4,7 @@
     Data: 7/13/2022
     Description:
         Class for providing password salting/hashing and evaluation functions, currently the 
-        relationship to class and EVP context is 1 to 1
+        relationship to class and openssl EVP context is 1 to 1(1 context per passwrod proccessor)
 */
 #include "passwordprocessor.h"
 #include <iostream>

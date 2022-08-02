@@ -20,16 +20,19 @@ const std::string UserDB::USR = "USERS";
 //initialize with name for sqlite db file
 //initlialize original schema for user table if it doesn't exist
 UserDB::UserDB(std::string dbname) {
+	
 	this->dbname = dbname;
 	passProcessor = new PasswordProcessor();
-	initTable(FRESH);//initialize a "fresh" table with only one user
+	initTable();//initialize a "fresh" table with only one user
 }
 UserDB::~UserDB() {
 	delete passProcessor;
+
 }
 void UserDB::initTable(int fresh) {
 	std::string sql;
 	if (fresh) {
+		std::cout << "user table dropped!!!" << std::endl;
 		sql = "DROP TABLE IF EXISTS USERS";
 		sqlEx(sql);
 	}
@@ -45,16 +48,15 @@ void UserDB::initTable(int fresh) {
 	sqlEx(sql);
 	sql = "pragma table_info('USERS')";
 	sqlEx(sql);
-	std::string salt = passProcessor->produceSalt();
-	std::string password = passProcessor->hash("JJjj@749847", salt);
+	/*std::string salt = passProcessor->produceSalt();
+	std::string password = passProcessor->hash("asdfASDF@1", salt);
 	sql = "\n"
 		"INSERT INTO USERS (username, firstname, lastname, password, salt)\n"
-		"VALUES ('jerusalemmoore', 'jerusalem', 'moore', '"+password+"', '"+salt+"'); \n";
+		"VALUES ('jerusalemmoore', 'Jerusalem', 'Moore', '"+password+"', '"+salt+"'); \n";
 	
+	sqlEx(sql);*/
+	sql = "SELECT * FROM USERS";
 	sqlEx(sql);
-	sql = "\
-	SELECT * FROM USERS\
-		";
 }
 void UserDB::insertUser(std::string firstName, std::string lastName, std::string username, std::string password) {
 	std::string salt = passProcessor->produceSalt();
@@ -73,19 +75,13 @@ int UserDB::callback(void* notUsed, int argc, char** argv, char** azColName) {
 	std::cout << "callback was called" << std::endl;
 	for (i = 0; i < argc; i++) {
 		printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
-		
+		//logFile << std::string(azColName[i]) << " = " << argv[i] ? argv[i] : "NULL";
 	}
 	//std::cout << "val: " << (char*)data << std::endl;
 
 	printf("\n");
 	//exit(EXIT_FAILURE);
 	return 0;
-}
-/*
-	will likely need this for updating info
-*/
-void UserDB::updateData(std::string data) {
-
 }
 
 //take a name and open db based off of string
@@ -135,68 +131,6 @@ void UserDB::sqlEx(std::string statement) {
 	sqlite3_close(db);
 
 }
-/*
-	NOTES:OVERLOAD FOR GENERALIZED USAGE
-		thinking about using data structs to pass to func so they may be parsed
-		differently depending on how we want to select (a specific col, multiple cols, lists, etc)
-		hopefully simplifying how to make expected queries will ease future development
-		struct ideas:
-		username/first/last/fk structs for query 1 col 1 row query
-		multi for multiple col 1 row query
-		username/first/last+List for multiple row query 1 col
-		multi+Username/First/Last/List for multiple row multiple col
-	run SELECT query to USER table
-	input:
-		colnames - vector of strings for storing columns included in query
-
-*/
-//sqlite3_stmt* UserDB::select(std::vector<std::string> colNames, std::string tableName, std::string username) {
-//	sqlite3* db = startDB(dbname);
-//	sqlite3_stmt* statement;
-//	std::string sql;
-//	int rc;
-//	//stop if colname is empty, something bad happened
-//	if (colNames.empty()) {
-//		std::cout << "Error, colnames list given is empty" << std::endl;
-//		exit(EXIT_FAILURE);
-//	}
-//	if (colNames.size() == 1) {
-//		sql = "SELECT " + colNames[0] + " FROM " + tableName + " ";
-//	}
-//	else {
-//		sql = "SELECT";
-//		for (auto colname = colNames.begin(); colname != colNames.end(); colname++) {
-//			if (std::next(colname) == colNames.end()) {
-//				sql += " " + *colname + " ";
-//			}
-//			else {
-//				sql += " " + *colname + ", ";
-//
-//			}
-//		}
-//		sql += "FROM " + tableName;
-//	}
-//	sql += " WHERE username == '" + username + "';";
-//	std::cout << sql << std::endl;
-//	rc = sqlite3_prepare_v2(db, sql.c_str(), int(sql.length()), &statement, NULL);
-//	if (rc != SQLITE_OK) {
-//		std::cout << "Error preparing statment: " << std::endl;
-//		std::cout << "Error: " << sqlite3_errmsg(db) << std::endl;
-//		std::cout << "statement: " << sql << std::endl;
-//		return NULL;
-//	}
-//
-//
-//	rc = sqlite3_step(statement);
-//	const unsigned char* entry1 = sqlite3_column_text(statement, 0);
-//	const unsigned char* entry2 = sqlite3_column_text(statement, 1);
-//	std::cout << "entry1: " << entry1 << std::endl;
-//	std::cout << "entry2: " << entry2 << std::endl;
-//
-//	return statement;
-//
-//
-//}
 /*
 	findUsername
 		public func for finding username in user table
@@ -335,6 +269,52 @@ std::string UserDB::select(Username username) {
 
 	return copy;
 	//const unsigned char*  = sqlite3_column_text(statement, 0);
+}
+void UserDB::changeFirstname(AccountInfo* account, std::string newFirstname) {
+	std::string sql =
+		"UPDATE " + USR + "\n"
+		"SET firstname = '" + newFirstname + "'\n"
+		"WHERE username = '" + account->getUsername() + "';";
+	sqlEx(sql);
+	account->setFirstName(newFirstname);
+}
+void UserDB::changeLastname(AccountInfo* account, std::string newLastname) {
+	std::string sql =
+		"UPDATE " + USR + "\n"
+		"SET lastname = '" + newLastname + "'\n"
+		"WHERE username = '" + account->getUsername() + "';";
+	sqlEx(sql);
+	account->setLastName(newLastname);
+}
+void UserDB::changeUsername(AccountInfo* account, std::string newUsername) {
+	std::string sql =
+		"UPDATE " + USR + "\n"
+		"SET username = '" + newUsername + "'\n"
+		"WHERE username = '" + account->getUsername() + "';";
+	sqlEx(sql);
+	account->setUsername(newUsername);
+}
+void UserDB::changePassword(AccountInfo* account, std::string newPassword) {
+	std::cout << "changing password" << std::endl;
+	sqlite3* db = startDB(dbname);
+	std::string sql =
+		"SELECT salt FROM " + USR + " WHERE username = '" + account->getUsername() + "';";
+	sqlite3_stmt* stmt = sqlPrep(db, sql);
+	if (!sqlStep(userdb, stmt)) {
+		std::cout << "nothing returned from query" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	std::string salt((char*)sqlite3_column_text(stmt, 0));
+	sqlite3_finalize(stmt);
+	std::string newHashedPass = passProcessor->hash(newPassword, salt);
+	sql =
+		"UPDATE " + USR + "\n"
+		"SET password = '" + newHashedPass + "'\n"
+		"WHERE username = '" + account->getUsername() + "';";
+	sqlEx(sql);
+	std::cout << "Salt: " + salt << std::endl;
+	sqlite3_close(db);
+	std::cout << "successful change" << std::endl;
 }
 
 //sqlite3_stmt* UserDB::select(firstname firstname) {

@@ -32,6 +32,7 @@ public:
 	void setUsername(std::string username);
 	void printFullName();
 	void clean();
+	void cleanName();
 	void printData();
 	bool isClear();
 private:

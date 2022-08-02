@@ -1,3 +1,11 @@
+/*
+    Programmer: Jerusalem Moore
+    Class: PasswordProcessor
+    Data: 7/13/2022
+    Description:
+        Class for providing password salting/hashing and evaluation functions, currently the
+        relationship to class and openssl EVP context is 1 to 1(1 context per passwrod proccessor)
+*/
 #pragma once
 #include <openssl/evp.h>
 #include <openssl/sha.h>

@@ -46,6 +46,8 @@ bool AccountInfo::isClear() {
 	}
 	return false;
 }
+
+
 /*
 	set accountInfo firstname private member to firstname val
 	input:

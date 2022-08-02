@@ -9,14 +9,13 @@
 #define NOMINMAX
 #define WIN32_LEAN_AND_MEAN 
 #include <windows.h>
-
 #include "accountInfo.h"
 #include "errmessenger.h"
-
 #include <limits>
 #include <algorithm> 
 #include "userdb.h"
 #include <regex>
+#include <fstream>
 //#include <string>
 //#include <iostream>
 class Interface {
@@ -24,15 +23,15 @@ public:
 	Interface();
 	~Interface();
 	void runInterface();
-
 	void login();
 private:
 	AccountInfo* account;
 	UserDB* userdb;
 	ErrMessenger* messenger;
+	std::ofstream logFile; 
 	std::string cleanName(std::string name);
 	void registerUser();
-	bool tryPassword(Username username, std::string password);
+	bool tryPassword(Username username, std::string password, errorCode error);
 	bool isNameAlpha(std::string name, bool first);
 	bool confirmName(std::string name, bool type);
 	void createAccount(AccountInfo* account, std::string password);
@@ -43,6 +42,15 @@ private:
 	bool passwordValid(std::string input);
 	void home(AccountInfo* account);
 	void checkAccount();
+	void editAccount();
+	void editFirstname();
+	void editLastname();
+	void editUsername();
+	void changePassword();
+	bool firstnameLoop();
+	bool lastnameLoop();
+	bool usernameLoop();
+	bool passwordLoop(std::string* passwordBuffer);
 	//get and verify info from input
 	bool processFirstName(std::string firstName);
 	bool processLastName(std::string lastName);

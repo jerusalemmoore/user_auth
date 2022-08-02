@@ -45,8 +45,16 @@ void ErrMessenger::printError(errorCode code)
 	case PASSWORDMATCH:
 		error = passwordMatch;
 		break;
+	case INCORRECTPASSWORD:
+		error = incorrectPassword;
+		break;
+	case PASSEQNEWPASS:
+		error = passEqNewPass;
+		break;
 	default:
 		std::cout << "INVALID INTERFACE ERROR CODE: " << code << std::endl;
+		std::cout << "Hint: You might've forgotten to add break after assigning"
+		" error string on given error code" << std::endl;
 		SetConsoleTextAttribute(hConsole, WHITE);
 		exit(EXIT_FAILURE);
 		break;
