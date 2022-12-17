@@ -136,14 +136,17 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="interface.cpp" />
     <ClCompile Include="passwordprocessor.cpp" />
+    <ClCompile Include="prompts.cpp" />
     <ClCompile Include="userdb.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="accountInfo.h" />
+    <ClInclude Include="enums.h" />
     <ClInclude Include="errmessenger.h" />
     <ClInclude Include="interface.h" />
     <ClInclude Include="passwordprocessor.h" />
     <ClInclude Include="queryStructs.h" />
+    <ClInclude Include="prompts.h" />
     <ClInclude Include="userdb.h" />
   </ItemGroup>
   <ItemGroup>

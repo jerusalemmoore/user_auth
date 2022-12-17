@@ -10,6 +10,8 @@
 #include "interface.h"
 #include <synchapi.h>
 #include "errhandlingapi.h"
+
+
 //#include "errormsg.cpp"
 #define FIRST true //flag for processing string as first name in functions
 #define LOGOUT 2
@@ -22,6 +24,7 @@ Interface::Interface() {
 	account = new AccountInfo();
 	userdb = new UserDB("userdb");
 	messenger = new ErrMessenger();
+	prompter = new Prompter();
 }
 
 /*
@@ -45,13 +48,14 @@ void Interface::runInterface() {
 			exit(EXIT_FAILURE);
 		}
 
-		std::cout << "----------------------------------------------------" << std::endl;
-		std::cout << "User Authentication System" << std::endl;
-		std::cout << "----------------------------------------------------" << std::endl;
-		std::cout << "Please choose an option: (1,2,3...)" << std::endl;
-		std::cout << "1. Register" << std::endl;
-		std::cout << "2. Login" << std::endl;
-		std::cout << "3. Exit" << std::endl;
+		//std::cout << "----------------------------------------------------" << std::endl;
+		//std::cout << "User Authentication System" << std::endl;
+		//std::cout << "----------------------------------------------------" << std::endl;
+		//std::cout << "Please choose an option: (1,2,3...)" << std::endl;
+		//std::cout << "1. Register" << std::endl;
+		//std::cout << "2. Login" << std::endl;
+		//std::cout << "3. Exit" << std::endl;
+		prompter->mainMenuPrompt();
 		std::cin >> userInput;
 
 		switch (userInput) {
@@ -140,13 +144,14 @@ bool Interface::processLastName(std::string lastName) {
 bool Interface::usernameLoop() {
 	std::string username;
 	do {
-		std::cout << "Please enter valid username" << std::endl;
+		/*std::cout << "Please enter valid username" << std::endl;
 		std::cout << "/////////////////////////////" << std::endl;
 		std::cout << "Rules:" << std::endl;
 		std::cout << "\t1. only one word" << std::endl;
 		std::cout << "\t2. must be unique" << std::endl;
 		std::cout << "\t3. must be at least 5 characters" << std::endl;
-		std::cout << "//////////////////////////////" << std::endl;
+		std::cout << "//////////////////////////////" << std::endl;*/
+		prompter->usernamePrompt(INITIAL);
 		std::cin >> username;
 		if (username == "back") {
 			account->clean();
@@ -160,16 +165,15 @@ bool Interface::usernameLoop() {
 	get given username input and validate until valid one is produced
 */
 bool Interface::processUsername(std::string username) {
-	Username usernameStruct;
-	usernameStruct.content = username;
-	bool valid = usernameValid(usernameStruct.content);
+
+	bool valid = usernameValid(username);
 	if (!valid) {
 		return valid;
 	}
-	bool unique = !checkUserExists(usernameStruct);
+	bool unique = !checkUserExists(username);
 	if (unique) {
 		std::cout << "username confirmed" << std::endl;
-		std::cout << usernameStruct.content << std::endl;
+		std::cout << username << std::endl;
 		//account->setUsername(usernameStruct.content);
 		return true;
 	}
@@ -181,7 +185,7 @@ bool Interface::processUsername(std::string username) {
 /*
 	check if there is account linked to given username
 */
-bool Interface::checkUserExists(Username username) {
+bool Interface::checkUserExists(std::string username) {
 	return userdb->usernameExists(username);
 }
 
@@ -197,7 +201,9 @@ bool Interface::usernameValid(std::string input) {
 		std::cout << "input string: " << input << std::endl;
 		std::cin >> choice;
 		if (choice == "n") {
-			std::cout << "Please re-enter username" << std::endl;
+			//std::cout << "Please re-enter username" << std::endl;
+			prompter->usernamePrompt(CONFIRM);
+
 			return false;
 		}
 		else if (choice != "n" && choice != "y") {
@@ -218,7 +224,7 @@ bool Interface::passwordLoop(std::string* passwordBuffer) {
 	bool confirmed = false;
 	std::string password;
 	do {
-		std::string prompt =
+	/*	std::string prompt =
 			"Please enter valid password\n"
 			"/////////////////////////////\n"
 			"Rules:\n"
@@ -226,8 +232,9 @@ bool Interface::passwordLoop(std::string* passwordBuffer) {
 			"\t2. must have both uppercase and lowercase characters\n"
 			"\t3. must include numbers (1,2,3...)\n"
 			"\t4. must include a special symbol (!,@,#...)\n"
-			"/////////////////////////////";
-		password = requestPassword(prompt);
+			"/////////////////////////////";*/
+		//prompter->passwordPrompt();
+		password = requestPassword(INITIAL);
 		if (password == "back") {
 			account->clean();
 			return false;
@@ -237,8 +244,8 @@ bool Interface::passwordLoop(std::string* passwordBuffer) {
 	*passwordBuffer = password;
 	return true;
 }
-std::string Interface::requestPassword(std::string prompt) {
-	std::cout << prompt << std::endl;
+std::string Interface::requestPassword(promptRequest request) {
+	prompter->passwordPrompt(request);
 	std::string input;
 	const char BACKSPACE = 8;
 	const char RETURN = 13;
@@ -274,14 +281,14 @@ std::string Interface::requestPassword(std::string prompt) {
 		std::cout << "get console error: " << GetLastError() << std::endl;
 		exit(EXIT_FAILURE);
 	}
-	std::cout << "console mode: " << con_mode << std::endl;
+	//std::cout << "console mode: " << con_mode << std::endl;
 	return input;
 }
 bool Interface::passwordConfirmed(std::string password) {
-	std::string prompt = "Please reenter password";
-	std::string input = requestPassword(prompt);
-	std::cout << "password: " << password << std::endl;
-	std::cout << "input: " << input << std::endl;
+	//std::string prompt = "Please reenter password";
+	std::string input = requestPassword(CONFIRM);
+	//std::cout << "password: " << password << std::endl;
+	//std::cout << "input: " << input << std::endl;
 	if (input == password) {
 		if (processPassword(password)) {
 			return true;
@@ -371,6 +378,13 @@ void Interface::createAccount(AccountInfo* account, std::string password) {
 
 */
 void Interface::home(AccountInfo* account) {
+	//std::cout << "111111111111111111111111";
+
+	//if (account->isClear()) {
+	//	std::cout << "hielij;adfkja;fdkj;f";
+	//	return;
+	//}
+	prompter->setAccount(account);
 	//system("CLS");
 	if (account == NULL) {
 		std::cout << "home: error, account was NULL" << std::endl;
@@ -378,12 +392,11 @@ void Interface::home(AccountInfo* account) {
 	}
 	int input = -1;
 	while (input != LOGOUT) {
-		std::cout << "----------------------------------------------------" << std::endl;
-		std::cout << "Hello " << account->getFirstName() << " " << account->getLastName() << std::endl;
-		std::cout << "----------------------------------------------------" << std::endl;
-		std::cout << "Please choose an option(1, 2, 3...)" << std::endl;
-		std::cout << "1. Edit account" << std::endl;
-		std::cout << "2. Logout" << std::endl;
+		if (account->isClear()) {
+			//std::cout << "hielij;adfkja;fdkj;f";
+			return;
+		}
+		prompter->userMenuPrompt();
 		std::cin >> input;
 		std::cin.clear();
 		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -394,6 +407,7 @@ void Interface::home(AccountInfo* account) {
 		}
 		case 2: {
 			system("CLS");
+			prompter->clean();
 			account->clean();
 			break;
 		}
@@ -410,20 +424,22 @@ void Interface::home(AccountInfo* account) {
 */
 void Interface::login() {
 	std::string input;
-	Username username;
+	std::string username;
 	std::string password;
 	bool passwordSuccess;
 	bool passwordConfirmed;
 	do {
-		std::cout << "----------------------------------------------------" << std::endl;
-		std::cout << "Please Enter Requested Login Credentials" << std::endl;
-		std::cout << "----------------------------------------------------" << std::endl;
-		std::cout << "Username: ";
-		std::cin >> input;
-		username.content = input;
-		std::cout << std::endl;
-		std::string prompt = "Password: ";
-		password = requestPassword(prompt);
+		prompter->loginBanner();
+		prompter->usernamePrompt(SIMPLE);
+		std::cin >> username;
+		//username.content = input;
+		//std::cout << std::endl;
+		//std::string prompt = "Password: ";
+		password = requestPassword(SIMPLE);
+		if (password == "back") {
+			account->clean();
+			return;
+		}
 	} while (!tryPassword(username, password, LOGINFAILED));
 	std::cout << "Logging in..." << std::endl;
 	Sleep(3000);
@@ -439,7 +455,7 @@ void Interface::login() {
 		true if combination exists
 		false otherwise
 */
-bool Interface::tryPassword(Username username, std::string password, errorCode error ) {
+bool Interface::tryPassword(std::string username, std::string password, ErrorCode error ) {
 	if (userdb->validateAccount(username, password, account)) {
 		//print account info for verification
 		account->printData();
@@ -526,11 +542,10 @@ void Interface::changePassword() {
 	std::cout << "Edit Password" << std::endl;
 	std::cout << "----------------------------------------------------" << std::endl;
 	std::string prompt = "Please enter original password:";
-	std::string password = requestPassword(prompt);
-	Username username;
-	username.content = account->getUsername();
+	std::string password = requestPassword(SIMPLE);
+	
 	std::string newPassword;
-	if (tryPassword(username, password, INCORRECTPASSWORD)) {
+	if (tryPassword(account->getUsername(), password, INCORRECTPASSWORD)) {
 		//if this returned false it means the action was aborted
 		if (!passwordLoop(&newPassword))
 			return;
@@ -551,15 +566,15 @@ void Interface::changePassword() {
 void Interface::editAccount() {
 	int input = -1;
 	while (input != 5) {
-		std::cout << "----------------------------------------------------" << std::endl;
+		/*std::cout << "----------------------------------------------------" << std::endl;
 		std::cout << "Choose information you'd like to edit" << std::endl;
 		std::cout << "----------------------------------------------------" << std::endl;
 		std::cout << "1. Edit Firstname" << std::endl;
 		std::cout << "2. Edit Lastname" << std::endl;
 		std::cout << "3. Edit Username" << std::endl;
 		std::cout << "4. Change Password" << std::endl;
-		std::cout << "5. Go Back" << std::endl;
-		
+		std::cout << "5. Go Back" << std::endl;*/
+		prompter->userEditPrompt();
 		std::cin >> input;
 		std::cin.clear();
 		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -576,7 +591,10 @@ void Interface::editAccount() {
 		case 4:
 			changePassword();
 			break;
-		case 5:
+		case 5: 
+			removeAccount();
+		case 6:
+			return;
 			break;
 		default:
 			messenger->printError(INVALIDENTRY);
@@ -653,3 +671,16 @@ void Interface::checkAccount() {
 //void Interface::dbStat() {
 //
 //}
+void Interface::removeAccount() {
+	prompter->passwordPrompt(SIMPLE);
+	std::string password = requestPassword(INITIAL);
+
+	if (tryPassword(account->getUsername(), password, INCORRECTPASSWORD)) {
+		std::cout << account->getUsername();
+		userdb->removeAccount(account->getUsername());
+		account->clean();
+		return;
+	}
+	std::cout << "Account Removal Error" << std::endl;
+	
+}

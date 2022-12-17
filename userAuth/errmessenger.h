@@ -20,7 +20,7 @@
 		userErrorCode - codes for errors related to a provided user
 */
 
-enum errorCode {
+enum ErrorCode {
 	FIVECHAR,
 	INVALIDENTRY,
 	NONALPHA,
@@ -34,7 +34,7 @@ enum errorCode {
 	INCORRECTPASSWORD,
 	PASSEQNEWPASS
 };
-enum userErrorCode {
+enum UserErrorCode {
 	USERNAMEEXISTS,
 	
 };
@@ -56,8 +56,8 @@ private:
 	const std::string incorrectPassword = "Error, password incorrect";
 	const std::string passEqNewPass = "Error, new password, can't be current password";
 public:
-	void printError(errorCode code);
-	void printUserError(userErrorCode code, std::string username);
+	void printError(ErrorCode code);
+	void printUserError(UserErrorCode code, std::string username);
 
 };
 

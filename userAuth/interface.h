@@ -7,7 +7,8 @@
 */
 #pragma once
 #define NOMINMAX
-#define WIN32_LEAN_AND_MEAN 
+#define WIN32_LEAN_AND_MEAN
+#include "prompts.h"
 #include <windows.h>
 #include "accountInfo.h"
 #include "errmessenger.h"
@@ -16,8 +17,11 @@
 #include "userdb.h"
 #include <regex>
 #include <fstream>
+//#include "prompts.h"
+
 //#include <string>
 //#include <iostream>
+
 class Interface {
 public:
 	Interface();
@@ -28,25 +32,27 @@ private:
 	AccountInfo* account;
 	UserDB* userdb;
 	ErrMessenger* messenger;
-	std::ofstream logFile; 
+	Prompter* prompter;
 	std::string cleanName(std::string name);
 	void registerUser();
-	bool tryPassword(Username username, std::string password, errorCode error);
+	bool tryPassword(std::string username, std::string password, ErrorCode error);
 	bool isNameAlpha(std::string name, bool first);
 	bool confirmName(std::string name, bool type);
 	void createAccount(AccountInfo* account, std::string password);
-	bool checkUserExists(Username username);
+	bool checkUserExists(std::string username);
 	bool usernameValid(std::string input);
 	bool passwordConfirmed(std::string password);
-	std::string requestPassword(std::string prompt);
-	bool passwordValid(std::string input);
+	std::string requestPassword(promptRequest request);
+	//bool passwordValid(std::string input);
 	void home(AccountInfo* account);
 	void checkAccount();
+	void removeAccount();
+	void editUsername();
 	void editAccount();
 	void editFirstname();
 	void editLastname();
-	void editUsername();
 	void changePassword();
+	//user input gathering loops
 	bool firstnameLoop();
 	bool lastnameLoop();
 	bool usernameLoop();

@@ -1,14 +1,22 @@
+/*
+	Programmer: Jerusalem Moore
+	Date: 7/5/2022
+	Description:
+		Class for providing error messages to users depending on given inputs
+		ErrMessenger outputs different errors depending on given codes
+
+	Note: I created this class for error messenging to user because simply implementing
+	with a cpp and h file was causing crtdump to catch leaks.
+	Class is allocated and deleted in the Interface class.
+*/
 #define WIN32_LEAN_AND_MEAN 
-
-//th
-
 #include "errmessenger.h"
 #define WHITE 15
 #define RED 12
 /*
 	function for printing general errors in Interface
 */
-void ErrMessenger::printError(errorCode code)
+void ErrMessenger::printError(ErrorCode code)
 {
 	std::string error;
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -66,7 +74,7 @@ void ErrMessenger::printError(errorCode code)
 /*
 	function for printing errors related to user
 */
-void ErrMessenger::printUserError(userErrorCode code, std::string username) {
+void ErrMessenger::printUserError(UserErrorCode code, std::string username) {
 	std::string error; 
 	if (username.empty()) {
 		std::cout << "HOLD ON, I THINK SOMETHING WENT WRONG!!!" << std::endl;

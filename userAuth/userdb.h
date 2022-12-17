@@ -22,14 +22,13 @@ class UserDB{
 public:
 	UserDB(std::string dbname);
 	~UserDB();
-	
-	
 	void dbhealthcheck();
 	void dbtest1();
 	void updateData(std::string data);
 	void insertUser(std::string firstName, std::string lastName, std::string username,std::string password);
-	bool validateAccount(Username username, std::string password, AccountInfo* account);
-	bool usernameExists(Username username);
+	void removeAccount(std::string username);
+	bool validateAccount(std::string username, std::string password, AccountInfo* account);
+	bool usernameExists(std::string username);
 	void changeFirstname(AccountInfo* account, std::string newFirstname);
 	void changeLastname(AccountInfo* account, std::string newLastname);
 	void changeUsername(AccountInfo* account, std::string newUsername);
@@ -41,7 +40,7 @@ private:
 	void initTable(int fresh = 0);
 	//func for intializing db when making queries
 	sqlite3* startDB(std::string dbname);
-	std::string select(Username username);
+	std::string select(std::string username);
 	sqlite3* userdb;
 	PasswordProcessor* passProcessor;
 	std::string getid();

@@ -7,16 +7,12 @@
 #include "interface.h"
 #include "queryStructs.h"
 
-void run() {
+
+
+int main() {
 	Interface* myinterface = new Interface();
 	myinterface->runInterface();
 	delete(myinterface);
-
-}
-
-int main() {
-	run();
-	
 	//look evaluate for leaks, 1 leak currently triggering looks to be a false alarm 
 	//originating from libraries
 	int leaking = _CrtDumpMemoryLeaks();
