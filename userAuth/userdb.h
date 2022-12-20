@@ -24,7 +24,6 @@ public:
 	~UserDB();
 	void dbhealthcheck();
 	void dbtest1();
-	void updateData(std::string data);
 	void insertUser(std::string firstName, std::string lastName, std::string username,std::string password);
 	void removeAccount(std::string username);
 	bool validateAccount(std::string username, std::string password, AccountInfo* account);
@@ -34,7 +33,6 @@ public:
 	void changeUsername(AccountInfo* account, std::string newUsername);
 	void changePassword(AccountInfo* account, std::string newPassword);
 private:
-	std::ofstream logFile;
 	sqlite3_stmt* sqlPrep(sqlite3* db, std::string stmt);
 	bool sqlStep(sqlite3* db, sqlite3_stmt* stmt);
 	void initTable(int fresh = 0);
@@ -50,5 +48,4 @@ private:
 	std::string tblname;
 	//string for userdb main table
 	static const std::string USR;
-
 };

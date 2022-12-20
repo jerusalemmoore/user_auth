@@ -9,14 +9,16 @@ public:
 	void mainMenuPrompt();
 	void userMenuPrompt();
 	void userEditPrompt();
+	void editPasswordPrompt();
+	void registrationBanner();
 	void passwordPrompt(promptRequest request);
 	void usernamePrompt(promptRequest request);
 	void setAccount(AccountInfo* account);
 	void loginBanner();
 	void clean();
-	void editFirstnamePrompt();
-	void editLastnamePrompt();
-	void editUsernamePrompt();
+	void editFirstnamePrompt(AccountInfo* account);
+	void editLastnamePrompt(AccountInfo* account);
+	void editUsernamePrompt(AccountInfo* account);
 	
 private:
 	

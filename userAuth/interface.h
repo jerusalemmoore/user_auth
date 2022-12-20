@@ -36,14 +36,14 @@ private:
 	std::string cleanName(std::string name);
 	void registerUser();
 	bool tryPassword(std::string username, std::string password, ErrorCode error);
-	bool isNameAlpha(std::string name, bool first);
-	bool confirmName(std::string name, bool type);
+	bool validateName(std::string name);
 	void createAccount(AccountInfo* account, std::string password);
-	bool checkUserExists(std::string username);
+	bool validatePassword(std::string password);
+
+	bool userExists(std::string username);
 	bool usernameValid(std::string input);
 	bool passwordConfirmed(std::string password);
-	std::string requestPassword(promptRequest request);
-	//bool passwordValid(std::string input);
+	bool validateMenuChoice(std::string input);
 	void home(AccountInfo* account);
 	void checkAccount();
 	void removeAccount();
@@ -51,7 +51,7 @@ private:
 	void editAccount();
 	void editFirstname();
 	void editLastname();
-	void changePassword();
+	void editPassword();
 	//user input gathering loops
 	bool firstnameLoop();
 	bool lastnameLoop();
@@ -61,7 +61,7 @@ private:
 	bool processFirstName(std::string firstName);
 	bool processLastName(std::string lastName);
 	bool processUsername(std::string username);
-	bool processPassword(std::string password);
+	std::string getPassword();
 
 
 };

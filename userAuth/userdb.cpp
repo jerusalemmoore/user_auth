@@ -249,11 +249,12 @@ std::string UserDB::select(std::string username) {
 	std::string sql = "SELECT username FROM " + USR + " WHERE username = '" + username + "';";
 	rc = sqlite3_prepare_v2(db, sql.c_str(), int(sql.length()), &statement, NULL);
 	if (rc != SQLITE_OK) {
-		std::cout << "error in prepare statement" << std::endl;
+		std::cout << "error in prepared statement" << std::endl;
 		std::cout << sql << std::endl;
+		exit(EXIT_FAILURE);
 
 	}
-	//search execute sql username search 
+	//execute sql username search 
 	rc = sqlite3_step(statement);
 	//if we get nothing it means the username is unique
 	if (rc != SQLITE_ROW) {
@@ -322,14 +323,6 @@ void UserDB::removeAccount(std::string username) {
 		"WHERE username = '" + username + "';";
 	sqlEx(statement);
 }
-//sqlite3_stmt* UserDB::select(firstname firstname) {
-//	sqlite3* db = startDB(dbname);
-//	sqlite3_stmt* statement;
-//	std::string sql;
-//	int rc;
-//	//stop if colname is empty, something bad happened
-//	
-//}
 
 ///////////////////////////////////////////////////////////////////////////////
 // TEST FUNCS
