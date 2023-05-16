@@ -1,4 +1,4 @@
-# userAuth project
+# user_auth project
 
 Goal is to create a user account creation and authentication system with c++  
     - currently a cli application
